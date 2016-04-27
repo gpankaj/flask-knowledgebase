@@ -1,0 +1,54 @@
+.first-column {
+  width: 20%;
+  float: left;
+  margin-left:150px;
+
+}
+
+tfoot input {
+        width: 100%;
+        padding: 3px;
+        box-sizing: border-box;
+    }
+
+
+
+#answer{
+    width:900px;
+    background:#f3f3f3;
+}
+
+#identity{
+    width:200px;
+    background:#d3d3d3;
+}
+
+
+#voting{
+   width:30px;
+   height:40px;
+}
+.upvote{
+   width:30px;
+   height: 20px;
+   cursor: pointer;
+}
+
+
+body{
+  padding:20px 20px;
+}
+
+.results tr[visible='false'],
+.no-result{
+  display:none;
+}
+
+.results tr[visible='true']{
+  display:table-row;
+}
+
+.counter{
+  padding:8px;
+  color:#ccc;
+}

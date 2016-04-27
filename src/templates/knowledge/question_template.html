@@ -1,0 +1,42 @@
+
+  <div class="form-group pull-right">
+    <input type="text" class="search form-control" placeholder="Search">
+  </div>
+  <span class="counter pull-right"></span>
+
+
+
+  <table class="table table-hover table-bordered results table-striped" cellspacing="0" width="100%">
+  <thead>
+    <tr>
+      <th>Count</th>
+      <th>Question</th>
+      <th>Date Asked</th>
+      <th>Asked By</th>
+      <th>Tag</th>
+    </tr>
+  </thead>
+  <tbody>
+
+
+
+  {% set count = 1 %}
+
+    {% for my_question in question_topic %}
+
+    <tr onclick="window.location.href='{{ url_for('knowledge.answer',question_id=my_question.id) }}';">
+
+      <th scope="row">{{ count }}</th>
+      <td>{{ my_question.question | nl2br }}</td>
+      <td>{{my_question.date}}</td>
+      <td>{{my_question.uid}}</td>
+      <td>{{my_question.topic_name}}</td>
+
+    </tr>
+
+
+    {% set count = count + 1 %}
+    {% endfor %}
+
+  </tbody>
+</table>

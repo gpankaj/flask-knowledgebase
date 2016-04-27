@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+
+
+{% block page_content  %}
+
+
+<div class="container" >
+    <br><h1 align="center">{{question_text.question}}</h1>
+    <h4 align="right">Viewed: {{question_text.visitors}} times</h4>
+    <h4 align="right">Asked By: {{question_text.uid}} </h4>
+    <h4 align="right"> {{question_text.date}} </h4>
+    <br>
+<hr width="80%">
+<br>
+
+    {% for p_answer in previous_answers %}
+
+
+    <h4 id="answer" align="left">
+
+
+      {{ p_answer.answer |markdown(autolink=True,hard_wrap =True, fenced_code=True, footnotes=True)|   urlize(50, target='_blank')}}
+
+
+    </h4>
+    {% if  current_user.is_authenticated %}
+        <form>
+            <input TYPE="button" VALUE="Upvote"
+                onclick="window.location.href='{{ url_for('knowledge.upvote',answer_id=p_answer.id)}}';">
+        </form>
+    {% endif %}
+    <div align="right">
+        <h4 id="identity" align="left">
+        Upvote: {{p_answer.upvote}}
+        <br>
+
+
+      {{moment(p_answer.date,local=True).fromNow() }}
+
+        <br>
+      Author: {{p_answer.uid}}
+    </h4>
+    </div>
+    <hr>
+    {% endfor %}
+
+
+    {% if  current_user.is_authenticated %}
+        {{ wtf.quick_form(form) }}
+    {% endif %}
+
+
+</div>
+
+{% endblock %}

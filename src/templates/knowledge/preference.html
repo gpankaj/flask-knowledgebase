@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+
+
+{% block page_content  %}
+    Your current Preferences:
+<br>
+<br>
+    {% for preference in preferences %}
+        <li><bold> {{ preference.topic_name }} </bold></li>
+    {% endfor %}
+
+<div class="container">
+{{ wtf.quick_form(form) }}
+</div>
+
+
+{% endblock %}
