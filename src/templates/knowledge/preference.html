@@ -1,14 +1,13 @@
 {% extends "base.html" %}
 
-
+{% block replace_login_url %}
+    <a href="{{auth_url}}" class="btn btn-primary btn-block" style="padding: 15px 0;">Login with Google</a>
+{% endblock %}
 
 {% block page_content  %}
     Your current Preferences:
 <br>
-<br>
-    {% for preference in preferences %}
-        <li><bold> {{ preference.topic_name }} </bold></li>
-    {% endfor %}
+
 
 <div class="container">
 {{ wtf.quick_form(form) }}

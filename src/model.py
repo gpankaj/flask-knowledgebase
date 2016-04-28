@@ -10,6 +10,7 @@ from src import login_manager
 from flask.ext.sqlalchemy import SQLAlchemy
 from . import create_app
 
+
 db = SQLAlchemy(create_app('development'), use_native_unicode=True)
 
 
@@ -50,14 +51,14 @@ class Upvote(db.Model):
     answer_id = db.Column(db.Integer, db.ForeignKey('answers.id'))
     question_id = db.Column(db.Integer,ForeignKey('questions.id'))
     date = db.Column(DateTime, default=func.now())
-    user_name = db.Column(db.String(20))
+    user_name = db.Column(db.String(100))
 
 class Visitor(db.Model):
     __tablename__='visitors'
     id = db.Column(db.Integer, primary_key=True)
     question_id = db.Column(db.Integer,ForeignKey('questions.id'))
     date = db.Column(DateTime, default=func.now())
-    user_name = db.Column(db.String(20))
+    user_name = db.Column(db.String(100))
 
 class Topic(db.Model):
     __tablename__= 'topics'
@@ -73,9 +74,16 @@ class Topic(db.Model):
 class User(UserMixin,db.Model):
     __tablename__='users'
     id = db.Column(db.Integer, primary_key=True)
-    uid = db.Column(db.String(20), unique=True)
+    email = db.Column(db.String(100), unique=True, nullable=False)
+    name = db.Column(db.String(100), nullable=True)
+    avatar = db.Column(db.String(200))
+    active = db.Column(db.Boolean, default=False)
+    tokens = db.Column(db.Text)
+    created_at = db.Column(DateTime, default=func.now())
+
+    #uid = db.Column(db.String(20), unique=True)
     is_admin = db.Column(db.Boolean)
-    password_hash = db.Column(db.String(128))
+    #password_hash = db.Column(db.String(128))
     email_me_for_new_question = db.Column(db.Boolean)
     email_me_for_updates = db.Column(db.Boolean)
 
@@ -87,22 +95,30 @@ class User(UserMixin,db.Model):
     answers = db.relationship('Answer', backref='author', lazy='dynamic')
     topics = db.relationship('Topic', backref='author', lazy='dynamic')
 
-    @property
-    def password(self):
-        raise AttributeError('password is not a readable attribute')
 
-    @password.setter
-    def password(self, password):
-        self.password_hash = generate_password_hash(password.strip())
-
-    def verify_password(self, password):
-        return check_password_hash(self.password_hash, password.strip())
 
 
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+
+from requests_oauthlib import OAuth2Session
+
+def get_google_auth(state=None, token=None):
+    from config import Auth
+    if token:
+        return OAuth2Session(Auth.CLIENT_ID, token=token)
+    if state:
+        return OAuth2Session(
+            Auth.CLIENT_ID,
+            state=state,
+            redirect_uri=Auth.REDIRECT_URI)
+    oauth = OAuth2Session(
+        Auth.CLIENT_ID,
+        redirect_uri=Auth.REDIRECT_URI,
+        scope=Auth.SCOPE)
+    return oauth
 
 
 from flask_admin.contrib import sqla
@@ -118,3 +134,5 @@ class TestAdmin(sqla.ModelView):
 
     create_template = 'edit.html'
     edit_template = 'edit.html'
+
+

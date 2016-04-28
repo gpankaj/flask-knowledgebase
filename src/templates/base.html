@@ -56,7 +56,7 @@ $(document).ready(function() {
         </div>
 
         <ul class="nav navbar-nav">
-            {% if current_user.is_authenticated %}
+            {% if current_user.is_authenticated() %}
             <li>
                 <a class="navbar-brand" href="{{url_for('knowledge.my_questions')}}">My Questions</a>
             </li>
@@ -67,28 +67,28 @@ $(document).ready(function() {
         </ul>
 
         <ul class="nav navbar-nav navbar-right">
-        {% if current_user.is_authenticated %}
+        {% if current_user.is_authenticated() %}
             <li>
                 <a href="{{url_for('knowledge.question')}}">Ask a Question</a>
             </li>
             <li class="active">
-                <a href="{{url_for('knowledge.preference',username=current_user.uid)}}">Preference</a>
+                <a href="{{url_for('knowledge.preference',username=current_user.email)}}">Preference</a>
             </li>
 
             <li>
-                <a href="{{url_for('knowledge.logout',username=current_user.uid)}}">Logout</a>
+                <a href="{{url_for('knowledge.logout',username=current_user.email)}}">Logout</a>
             </li>
 
             <li>
-                Welcome {{ current_user.uid }}
+                Welcome {{ current_user.name }}
             </li>
 
         {% endif %}
 
-            {% if not current_user.is_authenticated %}
-            <li>
-                <a href="{{url_for('knowledge.login')}}">Login</a>
-            </li>
+            {% if not current_user.is_authenticated() %}
+            {% block replace_login_url %}
+
+            {% endblock %}
             <li>
                 <a href="{{url_for('knowledge.register')}}">Register</a>
             </li>
