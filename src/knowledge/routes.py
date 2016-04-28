@@ -9,6 +9,15 @@ from flask.ext.login import login_user, login_required, current_user, logout_use
 
 
 
+#################################################
+#
+#
+#
+#
+#
+#
+#################################################
+
 def get_all_questions():
     from src.model import Question, Topic,User
     question_topic = Question.query.join(Topic).join(User,User.id==Question.user_id).add_columns(User.email,Question.question, Question.date, Topic.topic_name, Question.id, Topic.question_id)\
@@ -37,6 +46,16 @@ def get_all_questions():
 
 
 
+#################################################
+#
+#
+#
+#
+#
+#
+#################################################
+
+
 @knowledge.route('/help')
 def help():
     from src.model import get_google_auth
@@ -50,6 +69,16 @@ def help():
     session['oauth_state'] = state
 
     return render_template('knowledge/help.html', auth_url=auth_url)
+
+
+#################################################
+#
+#
+#
+#
+#
+#
+#################################################
 
 @knowledge.route('/')
 def index():
@@ -75,6 +104,15 @@ def index():
     return render_template('knowledge/index.html', auth_url=auth_url, question_topic=question_with_visitor)
 
 
+
+#################################################
+#
+#
+#
+#
+#
+#
+#################################################
 
 
 @knowledge.route('/my_questions')
@@ -106,6 +144,16 @@ def my_questions():
     return render_template('knowledge/my_questions.html', question_topic=compress_question_topic.values())
 
 
+#################################################
+#
+#
+#
+#
+#
+#
+#################################################
+
+
 @knowledge.route('/allquestions')
 def all_questions():
     #################################################################################
@@ -121,6 +169,15 @@ def all_questions():
     return render_template('knowledge/allquestions.html', question_topic=get_all_questions().values(),auth_url=auth_url)
 
 
+
+#################################################
+#
+#
+#
+#
+#
+#
+#################################################
 
 
 @knowledge.route('/question/', methods = ['GET', 'POST'])
@@ -146,6 +203,17 @@ def question():
 
 
 
+
+#################################################
+#
+#
+#
+#
+#
+#
+#################################################
+
+
 @knowledge.route('/question/<int:question_id>', methods = ['GET', 'POST'])
 def answer(question_id):
     from src.model import db,Question,Answer,User, Upvote, Visitor
@@ -155,7 +223,7 @@ def answer(question_id):
 
 
 
-#################################################################################
+    #################################################################################
     from src.model import get_google_auth, Visitor, Question
     from config import Auth
 
@@ -163,7 +231,7 @@ def answer(question_id):
     auth_url, state = google.authorization_url(
         Auth.AUTH_URI, access_type='offline')
     session['oauth_state'] = state
-#################################################################################
+    #################################################################################
 
     # update visitor count for question if logged in
     if(current_user.is_authenticated()):
@@ -223,6 +291,17 @@ def answer(question_id):
     return render_template('knowledge/answer.html', question_text = question_text, previous_answers = previous_answers_with_upvote, form=form, auth_url=auth_url)
 
 
+
+#################################################
+#
+#
+#
+#
+#
+#
+#################################################
+
+
 @knowledge.route('/upvote/answer/<int:answer_id>', methods = ['GET', 'POST'])
 def upvote(answer_id):
     from src.model import db, Upvote, Answer
@@ -238,6 +317,17 @@ def upvote(answer_id):
     # from answer id find question id user = User.query.filter_by(uid = form.username.data).first()
     answer_obj = Answer.query.filter_by(id=answer_id).first()
     return redirect(url_for('knowledge.answer',question_id=answer_obj.question_id))
+
+
+#################################################
+# TODO: Edit an answer
+#
+#
+#
+#
+#
+#################################################
+
 
 
 @knowledge.route('/question/<int:question_id>/edit/<int:answer_id>', methods = ['GET', 'POST'])
@@ -264,6 +354,15 @@ def editable_answer(question_id,answer_id):
     return render_template('knowledge/answer.html', question_text = question_text, previous_answers = previous_answers, form=form)
 
 
+#################################################
+#
+#
+#
+#
+#
+#
+#################################################
+
 
 @knowledge.route('/logout')
 @login_required
@@ -274,6 +373,16 @@ def logout():
     flash('You have been logged out.')
     return redirect(url_for('knowledge.index'))
 
+
+
+#################################################
+#
+#
+#
+#
+#
+#
+#################################################
 
 
 
@@ -319,6 +428,17 @@ def preference():
     return render_template('knowledge/preference.html', form = form)
 
 
+
+#################################################
+# TODO:
+#
+#
+#
+#
+#
+#################################################
+
+
 def mail_message(question,answer, topics):
     print "Sending mail from " + current_user.email
     print "Topics " + str(topics)
@@ -338,6 +458,16 @@ def mail_message(question,answer, topics):
         print obj.email
 
 
+#################################################
+#
+#
+#
+#
+#
+#
+#################################################
+
+
 @knowledge.route('/login')
 def login():
     from src.model import get_google_auth
@@ -353,9 +483,19 @@ def login():
 
 
 
+
+#################################################
+# Purpose: CallBack
+#
+#
+#
+#
+#
+#################################################
+
+
 import json
 from urllib2 import HTTPError
-
 
 @knowledge.route('/gCallback')
 def callback():
