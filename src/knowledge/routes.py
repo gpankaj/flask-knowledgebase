@@ -2,7 +2,6 @@
 from . import knowledge
 from flask import render_template, url_for, flash, redirect, request, abort, g, session
 from form import EnterKnowledge, AnswerForm
-from form import UserRegistration
 from form import Preference
 from form import Login
 from var_dump import var_dump
@@ -125,12 +124,25 @@ def answer(question_id):
     #question_text = Question.query.filter_by(id=question_id).first()
     question_text = Question.query.join(User).add_columns(Question.question, User.email, User.id, Question.user_id, Question.id, Question.date, Question.topics).filter(Question.id==question_id).first()
 
-    # update visitor count for question
 
-    visitor = Visitor.query.filter(Visitor.question_id==question_id).filter(Visitor.user_name==current_user.email).first()
-    if visitor is not None:
-        visitor.user_name=current_user.email
-        db.session.commit()
+
+#################################################################################
+    from src.model import get_google_auth, Visitor, Question
+    from config import Auth
+
+    google = get_google_auth()
+    auth_url, state = google.authorization_url(
+        Auth.AUTH_URI, access_type='offline')
+    session['oauth_state'] = state
+#################################################################################
+
+    # update visitor count for question if logged in
+    if(current_user.is_authenticated()):
+        visitor = Visitor.query.filter(Visitor.question_id==question_id).filter(Visitor.user_name==current_user.email).first()
+        if visitor is not None:
+            visitor.user_name=current_user.email
+            db.session.commit()
+
 
 
     #previous_answers = Answer.query.filter_by(question_id=question_id).all()
@@ -179,7 +191,7 @@ def answer(question_id):
                 flash('Can not submit an empty answer')
         #print "Capturing and showing answers for question id " + str(question_id)
 
-    return render_template('knowledge/answer.html', question_text = question_text, previous_answers = previous_answers_with_upvote, form=form)
+    return render_template('knowledge/answer.html', question_text = question_text, previous_answers = previous_answers_with_upvote, form=form, auth_url=auth_url)
 
 
 @knowledge.route('/upvote/answer/<int:answer_id>', methods = ['GET', 'POST'])
@@ -224,66 +236,12 @@ def editable_answer(question_id,answer_id):
 
 
 
-@knowledge.route('/register', methods = ['GET', 'POST'])
-def register():
-    form = UserRegistration()
-    if form.validate_on_submit():
-        print form.subscription.data
-
-        from src.model import User, Topic, db
-        #from .. import db
-
-        existing_user_name = User.query.filter_by(email=form.username.data).first()
-
-        #create user if not existing
-        if existing_user_name is None:
-            user = User(email=form.username.data, password = form.password.data, email_me_for_new_question=form.email_me_for_new_question.data, email_me_for_updates=form.email_me_for_updates.data )
-            db.session.add(user)
-            db.session.commit()
-            for topic in form.subscription.data:
-                topic_obj = Topic(topic_name = topic, user_id= user.id)
-                db.session.add(topic_obj)
-                db.session.commit()
-            flash ('Successfully Registered and updated your preference to subscribe to '  + str(form.subscription.data))
-            return redirect(url_for('.my_questions'))
-        else:
-            flash ('Username already existing ')
-
-    return render_template('knowledge/register.html', form = form)
-
-"""
-@knowledge.route('/login',methods = ['GET','POST'])
-def login():
-    if current_user.is_authenticated:
-        flash('You are already logged in.')
-        return redirect(url_for('.my_questions'))
-    form = Login()
-    if form.validate_on_submit():
-        from src.model import User, db
-        #from .. import db
-        user = User.query.filter_by(uid = form.username.data).first()
-        if user is None:
-            flash('User does not exist: ' + form.username.data )
-            return render_template('/knowledge/login.html', form=form)
-        elif(not user.verify_password(form.password.data)):
-            flash('Wrong Password')
-            return redirect(url_for('.login'))
-        else:
-            print "Logging using " + form.username.data
-
-            login_user(user,form.remember_me.data)
-            return redirect(request.args.get('next') or url_for('knowledge.index'))
-            flash('You have been logged in.')
-    return render_template('/knowledge/login.html', form=form)
-"""
-
 @knowledge.route('/logout')
 def logout():
     logout_user()
     #session.pop('email', '')
     #session.pop('oauth_state','')
     flash('You have been logged out.')
-    #return redirect(url_for('knowledge.login'))
     return redirect(url_for('knowledge.index'))
 
 
@@ -406,7 +364,9 @@ def callback():
             email = user_data['email']
             print "Email id is " + email
             user = User.query.filter_by(email=email).first()
+            exited = True
             if user is None:
+                exited = False
                 user = User()
                 user.email = email
             user.name = user_data['name']
@@ -416,6 +376,9 @@ def callback():
             db.session.add(user)
             db.session.commit()
             login_user(user)
-            flash("Successfully logged in, have a check on your preferences")
-            return redirect(url_for('knowledge.preference'))
+            if (not exited):
+                flash("Successfully logged in, have a check on your preferences")
+                return redirect(url_for('knowledge.preference'))
+            else:
+                return redirect(url_for('knowledge.preference'))
         return 'Could not fetch your information.'

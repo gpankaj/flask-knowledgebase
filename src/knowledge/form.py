@@ -28,19 +28,6 @@ class EnterKnowledge(Form):
                                                  ('Ec','Electric Command'), ('unix','unix')])
     submit = SubmitField('Submit')
 
-class UserRegistration(Form):
-    username = StringField('Username')
-    subscription = SelectMultipleField('Subscribe to Topic(s)',choices=[('Jenkins', 'Jenkins'), ('Perforce', 'Perforce'), ('Git', 'Git'),
-                                                 ('Ec','Electric Command'), ('unix','unix')])
-
-    email_me_for_new_question = BooleanField('Email me for new Questions (only for subscribed topics)')
-
-    email_me_for_updates = BooleanField('Email me for updates (only for subscribed topics)')
-
-    password = PasswordField('New Password', [Required(), EqualTo('confirm', message='Passwords must match')])
-    confirm  = PasswordField('Repeat Password')
-    submit = SubmitField('Submit')
-
 class ChangePassword(Form):
     password = PasswordField('New Password', [Required(), EqualTo('confirm', message='Passwords must match')])
     confirm  = PasswordField('Repeat Password')
