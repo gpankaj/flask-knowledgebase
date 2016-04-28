@@ -2,13 +2,24 @@
 
 {% block replace_login_url %}
     {% if auth_url %}
-        <a href="{{auth_url}}" class="btn btn-primary btn-block" style="padding: 15px 0;">Login with Google</a>
+        <a class="navbar-brand" href="{{auth_url}}">Login with Google</a>
     {% endif %}
 {% endblock %}
 
 {% block page_content  %}
 <div class="container">
-    <h1>Top Questions</h1>
+
+    <h1>Top Viewed Questions</h1>
+
+
+
+    {% if question_topic %}
+        {% include "knowledge/question_template.html" %}
+    {% else %}
+    <br>
+    <br>
+        <h4>There is no question at the moment to display</h4>
+    {% endif %}
 
 </div>
 {% endblock %}

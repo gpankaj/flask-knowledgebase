@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block replace_login_url %}
+    {% if auth_url %}
+        <a class="navbar-brand" href="{{auth_url}}" >Login with Google</a>
+    {% endif %}
+{% endblock %}
+
+{% block page_content  %}
+<div class="container">
+    <br><br><br><br><br><br><br>
+
+    <h4 align="center">Send email to : it-btg-support-list@broadcom.com </h4>
+
+</div>
+{% endblock %}

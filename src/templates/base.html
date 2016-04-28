@@ -47,8 +47,10 @@ $(document).ready(function() {
 
 {% block navbar %}
 
-<nav class="navbar">
-    <div class="container">
+<div class="container">
+
+    <nav class="navbar navbar-inverse">
+
 
 
         <div class="navbar-header">
@@ -62,24 +64,22 @@ $(document).ready(function() {
             </li>
             {% endif %}
             <li>
-                <a href="{{url_for('knowledge.all_questions')}}">All Questions</a>
+                <a class="navbar-brand" href="{{url_for('knowledge.all_questions')}}">All Questions</a>
             </li>
-        </ul>
 
-        <ul class="nav navbar-nav navbar-right">
         {% if current_user.is_authenticated() %}
             <li>
-                <a href="{{url_for('knowledge.question')}}">Ask a Question</a>
+                <a class="navbar-brand" href="{{url_for('knowledge.question')}}">Ask a Question</a>
             </li>
-            <li class="active">
-                <a href="{{url_for('knowledge.preference',username=current_user.email)}}">Preference</a>
+            <li>
+                <a  class="navbar-brand" href="{{url_for('knowledge.preference',username=current_user.email)}}">Preference</a>
             </li>
 
             <li>
-                <a href="{{url_for('knowledge.logout',username=current_user.email)}}">Logout</a>
+                <a class="navbar-brand" href="{{url_for('knowledge.logout',username=current_user.email)}}">Logout</a>
             </li>
 
-            <li>
+            <li class="nav navbar-nav navbar-right text-primary">
                 Welcome {{ current_user.name }}
             </li>
 
@@ -91,18 +91,20 @@ $(document).ready(function() {
             {% endblock %}
 
         {% endif %}
-
-            <li class="nav navbar-nav navbar-right">
-                <a class="navbar-brand navbar-right" href="">Contact</a>
-            </li>
         </ul>
-    </div>
-</nav>
+
+
+
+        <ul class="navbar-brand navbar-right">
+            <a href="{{url_for('knowledge.help')}}">Help</a>
+        </ul>
+    </nav>
 
 {% endblock %}
 
 
 {% block content %}
+
 
         {% for message in get_flashed_messages() %}
             <div class="alert alert-warning">
@@ -112,17 +114,11 @@ $(document).ready(function() {
             {% endfor %}
 
 
-    <div class="modal-body row-fluid">
-
-        <div class="first-column container">
             {% block page_content %}{% endblock %}
-        </div>
-
-    </div>
 
 {% endblock %}
 
-
+</div>
 
 
 

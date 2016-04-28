@@ -35,21 +35,44 @@ def get_all_questions():
             seen[q_t.id] = " ,  " + q_t.topic_name
     return compress_question_topic
 
-@knowledge.route('/')
-def index():
-    from src.model import get_google_auth, Visitor, Question
+
+
+@knowledge.route('/help')
+def help():
+    from src.model import get_google_auth
     from config import Auth
-
-
     if current_user.is_authenticated():
-        flash("You are already authenticated ")
-        return render_template('knowledge/index.html')
-    print("Message from index - you were unauthorized")
+        return render_template('knowledge/help.html')
+
     google = get_google_auth()
     auth_url, state = google.authorization_url(
         Auth.AUTH_URI, access_type='offline')
     session['oauth_state'] = state
-    return render_template('knowledge/index.html', auth_url=auth_url)
+
+    return render_template('knowledge/help.html', auth_url=auth_url)
+
+@knowledge.route('/')
+def index():
+    from src.model import get_google_auth, Visitor
+    from config import Auth
+
+
+    question_with_visitor=[]
+    for question in get_all_questions().values():
+        all_visitors = Visitor.query.filter(Visitor.question_id==question.id).count()
+        question.visitor = all_visitors
+        question_with_visitor.append(question)
+
+    if current_user.is_authenticated():
+        return render_template('knowledge/index.html', question_topic=question_with_visitor)
+
+    print("Message from index - you are unauthorized, builgin URL to use for login")
+    google = get_google_auth()
+    auth_url, state = google.authorization_url(
+        Auth.AUTH_URI, access_type='offline')
+    session['oauth_state'] = state
+
+    return render_template('knowledge/index.html', auth_url=auth_url, question_topic=question_with_visitor)
 
 
 
@@ -85,13 +108,19 @@ def my_questions():
 
 @knowledge.route('/allquestions')
 def all_questions():
-    return render_template('knowledge/allquestions.html', question_topic=get_all_questions().values())
+    #################################################################################
+    from src.model import get_google_auth, Visitor, Question
+    from config import Auth
+
+    google = get_google_auth()
+    auth_url, state = google.authorization_url(
+        Auth.AUTH_URI, access_type='offline')
+    session['oauth_state'] = state
+#################################################################################
+
+    return render_template('knowledge/allquestions.html', question_topic=get_all_questions().values(),auth_url=auth_url)
 
 
-
-@knowledge.route('/topic/<topic_name>')
-def topics(topic_name):
-    return render_template('knowledge/topics.html', topic_name = topic_name)
 
 
 @knowledge.route('/question/', methods = ['GET', 'POST'])
@@ -237,6 +266,7 @@ def editable_answer(question_id,answer_id):
 
 
 @knowledge.route('/logout')
+@login_required
 def logout():
     logout_user()
     #session.pop('email', '')
