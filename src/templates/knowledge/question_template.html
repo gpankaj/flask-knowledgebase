@@ -25,16 +25,19 @@
 
   {% set count = 1 %}
 
+
+  {% if question_topic %}
+
     {% for my_question in question_topic %}
 
     <tr onclick="window.location.href='{{ url_for('knowledge.answer',question_id=my_question.id) }}';">
 
       <th scope="row">{{ count }}</th>
-      <td>{{ my_question.question | nl2br }}</td>
+      <td>{{ my_question.question  |striptags }}</td>
       <td>{{my_question.date}}</td>
       <td>{{my_question.email}}</td>
       <td>{{my_question.topic_name}}</td>
-      {% if my_question.visitor %}
+      {% if question_topic[0].visitor %}
       <td>{{my_question.visitor}}</td>
       {% endif %}
     </tr>
@@ -43,5 +46,6 @@
     {% set count = count + 1 %}
     {% endfor %}
 
+  {% endif %}
   </tbody>
 </table>

@@ -119,20 +119,3 @@ def get_google_auth(state=None, token=None):
         redirect_uri=Auth.REDIRECT_URI,
         scope=Auth.SCOPE)
     return oauth
-
-
-from flask_admin.contrib import sqla
-from src.knowledge.form import CKTextAreaField
-
-class Test(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    text = db.Column(db.UnicodeText)
-
-
-class TestAdmin(sqla.ModelView):
-    form_overrides = dict(text=CKTextAreaField)
-
-    create_template = 'edit.html'
-    edit_template = 'edit.html'
-
-

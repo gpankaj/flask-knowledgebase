@@ -3,7 +3,7 @@ import os
 #from src import db
 from src import create_app
 from flask.ext.script import Manager
-from src.model import User, db, TestAdmin, Test
+from src.model import User, db
 from flask.ext.admin import Admin
 
 
@@ -29,7 +29,7 @@ def nl2br(eval_ctx, value):
 
 admin = Admin(app)
 manager = Manager(app)
-admin.add_view(TestAdmin(Test, db.session))
+
 db.create_all()
 
 @manager.command

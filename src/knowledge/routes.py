@@ -2,10 +2,11 @@
 from . import knowledge
 from flask import render_template, url_for, flash, redirect, request, abort, g, session
 from form import EnterKnowledge, AnswerForm
-from form import Preference
+from form import Preference, CKEditorForm
 from form import Login
 from var_dump import var_dump
 from flask.ext.login import login_user, login_required, current_user, logout_user
+
 
 
 
@@ -24,24 +25,28 @@ def get_all_questions():
         .filter(Question.id == Topic.question_id).\
                     order_by(Question.date.desc()).all()
 
-
+    #print len(question_topic)
     # If there is no question existing in system, redirect user to ask a question
     if(not question_topic):
         flash('Currently there is no question in database, ask a question')
         return redirect(url_for('knowledge.question'))
 
+
     #Below logic is to create a set of topic, with same question there can be more than one tag and multiple entry for that in Topics table.
     compress_question_topic = {}
     seen = {}
     for q_t in question_topic:
+        print q_t.id
         if q_t.id in seen:
             q_t.topic_name += seen[q_t.id]
             compress_question_topic[q_t.id] = q_t
-            print "Reading question is " + q_t.question
+            #print "Reading question is " + q_t.question
 
         else:
+            #print "Inside Else block  question is " + q_t.question
             compress_question_topic[q_t.id] = q_t
             seen[q_t.id] = " ,  " + q_t.topic_name
+    #print len(compress_question_topic)
     return compress_question_topic
 
 
@@ -87,10 +92,12 @@ def index():
 
 
     question_with_visitor=[]
-    for question in get_all_questions().values():
-        all_visitors = Visitor.query.filter(Visitor.question_id==question.id).count()
-        question.visitor = all_visitors
-        question_with_visitor.append(question)
+    if (bool(get_all_questions()) and isinstance(get_all_questions(), dict)):
+        for question in get_all_questions().values():
+            all_visitors = Visitor.query.filter(Visitor.question_id==question.id).count()
+            question.visitor = all_visitors
+            question_with_visitor.append(question)
+
 
     if current_user.is_authenticated():
         return render_template('knowledge/index.html', question_topic=question_with_visitor)
@@ -137,7 +144,9 @@ def my_questions():
     for q_t in question_topic:
         if q_t.id in seen:
             q_t.topic_name += seen[q_t.id]
+            print "Topic Name " + q_t.topic_name
             compress_question_topic[q_t.id] = q_t
+            seen[q_t.id] = " ,  " + q_t.topic_name
         else:
             compress_question_topic[q_t.id] = q_t
             seen[q_t.id] = " ,  " + q_t.topic_name
@@ -165,8 +174,10 @@ def all_questions():
         Auth.AUTH_URI, access_type='offline')
     session['oauth_state'] = state
 #################################################################################
-
-    return render_template('knowledge/allquestions.html', question_topic=get_all_questions().values(),auth_url=auth_url)
+    if (bool(get_all_questions()) and isinstance(get_all_questions(), dict)):
+        return render_template('knowledge/allquestions.html', question_topic=get_all_questions().values(),auth_url=auth_url)
+    else:
+        return render_template('knowledge/index.html', auth_url=auth_url, question_topic=[])
 
 
 
@@ -186,17 +197,27 @@ def question():
     form = EnterKnowledge()
     if form.validate_on_submit():
         from src.model import Topic, db, Question
-        my_data = "'" + form.question.data + "'"
+        my_data = form.question.data
         question_obj = Question(question=my_data,user_id=current_user.id)
 
         db.session.add(question_obj)
         db.session.commit()
 
-        mail_message(question_obj, None,form.topic.data )
         for t in form.topic.data:
             topic_obj = Topic(question_id=question_obj.id, topic_name = t)
+            print "Topic is set to " + t
             db.session.add(topic_obj)
             db.session.commit()
+
+        mail_message(question_obj, None,form.topic.data )
+        if not form.topic.data:
+            print "Setting topic data"
+            topic_obj = Topic(question_id=question_obj.id, topic_name = "unknown")
+            print "Topic is set to " + "unknown"
+            db.session.add(topic_obj)
+            db.session.commit()
+
+
 
         return redirect(url_for('knowledge.my_questions'))
     return render_template('knowledge/question.html', form=form)

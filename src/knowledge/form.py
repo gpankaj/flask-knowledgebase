@@ -3,29 +3,26 @@ __author__ = 'pankajg'
 from flask.ext.wtf import Form
 
 from flask_wysiwyg.wysiwyg import WysiwygField
-from wtforms import StringField, PasswordField, BooleanField, SubmitField,SelectField, SelectMultipleField, TextAreaField, widgets
+from wtforms import StringField, PasswordField, BooleanField, SubmitField,SelectField, SelectMultipleField, TextAreaField
 from wtforms.validators import Required, Length, Email, EqualTo
 from flask.ext.login import login_user, login_required, current_user
-
-class CKTextAreaWidget(widgets.TextArea):
-    def __call__(self, field, **kwargs):
-        kwargs.setdefault('class_', 'ckeditor')
-        return super(CKTextAreaWidget, self).__call__(field,
-            **kwargs)
-
-
-class CKTextAreaField(TextAreaField):
-    widget = CKTextAreaWidget()
+from flaskckeditor import CKEditor
 
 
 
-class EnterKnowledge(Form):
+class CKEditorForm(Form, CKEditor):
+    title =  StringField()
+    ckdemo = TextAreaField()
+    submit = SubmitField('submit')
+
+
+class EnterKnowledge(Form,CKEditor):
     #question = StringField('Question', validators=[Required(), Length(1, 64)], body=WysiwygField(u"texteditor",validators=[Required()])
     #question = WysiwygField("txteditor", validators=[Required()])
-    question = CKTextAreaField('Question')
+    question = TextAreaField('Question')
 
-    topic = SelectMultipleField('Topic',choices=[('Jenkins', 'Jenkins'), ('Perforce', 'Perforce'), ('Git', 'Git'),
-                                                 ('Ec','Electric Command'), ('unix','unix')])
+    topic = SelectMultipleField('Topic',default='unknown', choices=[('Jenkins', 'Jenkins'), ('Perforce', 'Perforce'), ('Git', 'Git'),
+                                                 ('Ec','Electric Command'), ('unix','unix'),('unknown','No Topic Set')])
     submit = SubmitField('Submit')
 
 class ChangePassword(Form):
@@ -53,9 +50,14 @@ class Preference(Form):
 
 
 
-class AnswerForm(Form):
-    answer = CKTextAreaField('Answer')
-    submit = SubmitField('Submit')
+class AnswerForm(Form,CKEditor):
+    #answer = CKEditorForm()
+    #form_widget_args = dict(description={'class': 'form-control ckeditor'})
+
+   # create_template = 'admin/ckeditor.html'
+   # edit_template = 'admin/ckeditor.html
+    answer = TextAreaField('answer')
+    submit = SubmitField('submit')
 
 
 class UpvoteForm(Form):

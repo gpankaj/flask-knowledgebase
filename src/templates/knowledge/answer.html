@@ -8,7 +8,7 @@
 
 
 <div class="container" >
-    <br><h1 align="center">{{question_text.question}}</h1>
+    <br><h1 align="center"> {{question_text.question | markdown(autolink=True,hard_wrap =True, fenced_code=True, footnotes=True) }}</h1>
     <h4 align="right">Viewed: {{question_text.visitors}} times</h4>
     <h4 align="right">Asked By: {{question_text.email}} </h4>
     <h4 align="right"> {{question_text.date}} </h4>
@@ -22,7 +22,7 @@
     <h4 id="answer" align="left">
 
 
-      {{ p_answer.answer |markdown(autolink=True,hard_wrap =True, fenced_code=True, footnotes=True)|   urlize(50, target='_blank')}}
+      {{ p_answer.answer |markdown(autolink=True ,hard_wrap =True, fenced_code=True, footnotes=True)}}
 
 
     </h4>
@@ -49,7 +49,20 @@
 
 
     {% if  current_user.is_authenticated() %}
-        {{ wtf.quick_form(form) }}
+
+
+
+<!--https://github.com/neo1218/flask-ckeditor/tree/master/examples/app-->
+
+    <form method="POST">
+    {{ form.hidden_tag() }}
+    <h4>Your Answer:</h4> {{ form.answer(class='ckeditor') }}
+
+    {{ form.submit(class="btn btn-default btn-lg btn-primary") }}
+</form>
+
+
+
 
     <br>
     <a target="_blank" href="https://en.wikipedia.org/wiki/Markdown#Example">Help on text formatting</a>
