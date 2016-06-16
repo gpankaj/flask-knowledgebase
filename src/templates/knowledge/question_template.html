@@ -13,14 +13,13 @@
       <th>Question</th>
       <th>Date Asked</th>
       <th>Asked By</th>
-      <th>Tag</th>
+      <th>Tag(s)</th>
       {% if question_topic[0].visitor %}
       <th>Visitors</th>
       {% endif %}
     </tr>
   </thead>
   <tbody>
-
 
 
   {% set count = 1 %}
@@ -33,7 +32,7 @@
     <tr onclick="window.location.href='{{ url_for('knowledge.answer',question_id=my_question.id) }}';">
 
       <th scope="row">{{ count }}</th>
-      <td>{{ my_question.question  |striptags }}</td>
+      <td>{{ my_question.subject  |striptags }}</td>
       <td>{{my_question.date}}</td>
       <td>{{my_question.email}}</td>
       <td>{{my_question.topic_name}}</td>

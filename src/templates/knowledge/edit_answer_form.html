@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block replace_login_url %}
+    <a class="navbar-brand" href="{{auth_url}}">Login with Google</a>
+{% endblock %}
+
+{% block page_content  %}
+
+
+<div class="container" >
+
+    {% if  current_user.is_authenticated() %}
+    <!--https://github.com/neo1218/flask-ckeditor/tree/master/examples/app-->
+
+    <form method="POST" onsubmit="myFunction()">
+        {{ form.hidden_tag() }}
+        <h4>Your Answer:</h4> {{ form.answer(class='ckeditor') }}
+        {{ form.submit(class="btn btn-default btn-lg btn-primary") }}
+    </form>
+
+    <script>
+        //updated =  $("#answer").val();
+        modified_data =""
+        var editor = CKEDITOR.replace( 'answer' );
+        // The "change" event is fired whenever a change is made in the editor.
+        editor.on( 'change', function( evt ) {
+            // getData() returns CKEditor's HTML content.
+            //console.log( 'Total bytes: ' + evt.editor.getData() );
+            modified_data = evt.editor.getData();
+        });
+
+        function myFunction() {
+            console.log("submitted" + modified_data);
+
+        }
+
+    </script>
+
+    <a target="_blank" href="https://en.wikipedia.org/wiki/Markdown#Example">Help on text formatting</a>
+    {% endif %}
+
+</div>
+
+{% endblock %}

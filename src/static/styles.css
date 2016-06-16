@@ -52,3 +52,22 @@ body{
   padding:8px;
   color:#ccc;
 }
+
+
+select {
+    color: gray;
+    display: inline-block;
+    font-size: 15px;
+    height:auto;
+    line-height: 18px;
+    padding: 4px;
+    width: 400px;
+}
+
+#field {
+    color: gray;
+    display: inline-block;
+    font-size: 20px;
+    height:auto;
+    alignment: right;
+}

@@ -13,10 +13,12 @@ from . import create_app
 
 db = SQLAlchemy(create_app('development'), use_native_unicode=True)
 
-
 class Question(db.Model):
     __tablename__= 'questions'
     id = db.Column(db.Integer, primary_key=True)
+    subject = db.Column(db.String(256),nullable=False)
+
+    private = db.Column(db.Boolean,default=False)
 
     question = db.Column(db.UnicodeText, nullable=False)
     #question_answers = relationship("Answer")
@@ -29,6 +31,10 @@ class Question(db.Model):
     #one question can have multiple topics/tags
     #question_topics = relationship("Topic")
     answers = db.relationship('Answer', lazy='dynamic', backref='question')
+    #If the question was modified by author
+    edited_count = db.Column(db.Integer, autoincrement=True)
+    edited_date = db.Column(DateTime,default=func.now())
+    flag_offensive = db.Column(db.Boolean, default=False)
     visitor_count=db.Column(db.Integer)
 
 
@@ -42,6 +48,11 @@ class Answer(db.Model):
     # One Answer will have one user name
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     date = db.Column(DateTime, default=func.now())
+    reply_of_id=db.Column(db.Integer)
+    edited_count = db.Column(db.Integer, autoincrement=True)
+    edited_date = db.Column(DateTime, default=func.now())
+    flag_offensive = db.Column(db.Boolean, default=False)
+    verified = db.Column(db.Boolean, default=False)
     visitor_count=db.Column(db.Integer)
 
 
@@ -69,6 +80,14 @@ class Topic(db.Model):
     #user_uid = db.Column(db.String(20))
 
 
+class Blog(db.Model):
+    __tablename__='blogs'
+    id = db.Column(db.Integer, primary_key=True)
+    answer = db.Column(db.String(5026), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    private = db.Column(db.Boolean, default=False)
+    visitor_count = db.Column(db.Integer)
+
 
 
 class User(UserMixin,db.Model):
@@ -94,9 +113,6 @@ class User(UserMixin,db.Model):
     questions = db.relationship('Question', backref='author', lazy='dynamic')
     answers = db.relationship('Answer', backref='author', lazy='dynamic')
     topics = db.relationship('Topic', backref='author', lazy='dynamic')
-
-
-
 
 @login_manager.user_loader
 def load_user(user_id):

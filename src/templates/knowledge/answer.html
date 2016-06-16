@@ -8,41 +8,47 @@
 
 
 <div class="container" >
-    <br><h1 align="center"> {{question_text.question | markdown(autolink=True,hard_wrap =True, fenced_code=True, footnotes=True) }}</h1>
-    <h4 align="right">Viewed: {{question_text.visitors}} times</h4>
-    <h4 align="right">Asked By: {{question_text.email}} </h4>
-    <h4 align="right"> {{question_text.date}} </h4>
-    <br>
+
+
+    <h6 align="right"><a href='{{ url_for("knowledge.editable_question",question_id=question_text.id)}}' >Rephrase Question</a></h6>
+
+    <h2 align="center"> {{question_text.subject }}</h2>
+
+    {% if question_text.private %}
+        <a href='{{ url_for("knowledge.editable_question",question_id=question_text.id)}}' >
+            <h6 align="right" style="color: red">This is a private Question</h6>
+        </a>
+    {% endif %}
+
+    <h4 align="left"> {{question_text.question | markdown(autolink=True,hard_wrap =True, fenced_code=True, footnotes=True) }}</h4>
+
+    <h6 align="right">Viewed: {{question_text.visitors}} times</h6>
+    <h6 align="right">Asked By: {{question_text.email}} </h6>
+    <h6 align="right"> {{question_text.date}} </h6>
+
+
 <hr width="80%">
-<br>
 
     {% for p_answer in previous_answers %}
-
-
+    <h6 align="right"><a href='{{ url_for("knowledge.editable_answer",answer_id=p_answer.id)}}' >Rephrase Answer</a></h6>
     <h4 id="answer" align="left">
-
-
       {{ p_answer.answer |markdown(autolink=True ,hard_wrap =True, fenced_code=True, footnotes=True)}}
-
-
     </h4>
+
     {% if  current_user.is_authenticated() %}
         <form>
-            <input TYPE="button" VALUE="Upvote"
-                onclick="window.location.href='{{ url_for('knowledge.upvote',answer_id=p_answer.id)}}';">
+            <input TYPE="button" VALUE="Upvote" onclick="window.location.href='{{ url_for('knowledge.upvote',answer_id=p_answer.id)}}';">
+            <input align="right" TYPE="button" VALUE="Comment" onclick="window.location.href='{{ url_for('knowledge.upvote',answer_id=p_answer.id)}}';">
         </form>
     {% endif %}
+
     <div align="right">
-        <h4 id="identity" align="left">
+        <h6 id="identity" align="left">
         Upvote: {{p_answer.upvote}}
-        <br>
-
-
-      {{moment(p_answer.date,local=True).fromNow() }}
-
-        <br>
+            <br>
+      {{moment(p_answer.date,local=True).fromNow() }}<br>
       Author: {{p_answer.email}}
-    </h4>
+    </h6>
     </div>
     <hr>
     {% endfor %}
@@ -50,21 +56,18 @@
 
     {% if  current_user.is_authenticated() %}
 
-
-
-<!--https://github.com/neo1218/flask-ckeditor/tree/master/examples/app-->
+    <!--https://github.com/neo1218/flask-ckeditor/tree/master/examples/app-->
 
     <form method="POST">
-    {{ form.hidden_tag() }}
-    <h4>Your Answer:</h4> {{ form.answer(class='ckeditor') }}
-
-    {{ form.submit(class="btn btn-default btn-lg btn-primary") }}
-</form>
-
+        {{ form.hidden_tag() }}
+        <h4>Your Answer:</h4> {{ form.answer(class='ckeditor') }}
+        {{ form.submit(class="btn btn-default btn-lg btn-primary") }}
+    </form>
 
 
 
-    <br>
+
+
     <a target="_blank" href="https://en.wikipedia.org/wiki/Markdown#Example">Help on text formatting</a>
     {% endif %}
 

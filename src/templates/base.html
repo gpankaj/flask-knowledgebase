@@ -7,12 +7,9 @@
 {% block head %}
 <!--http://codepen.io/adobewordpress/pen/gbewLV     USEFUL FOR SEARCH FEATURE ON TABLE-->
 
-
-
-
-
-<script src="//cdn.bootcss.com/jquery/2.2.1/jquery.js" type="text/javascript"></script>
-
+<script   src="https://code.jquery.com/jquery-2.2.3.js"   integrity="sha256-laXWtGydpwqJ8JA+X9x2miwmaiKhn8tVmOVEigRNtP4="   crossorigin="anonymous"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+<script src="/static/ckeditor/ckeditor.js" type="text/javascript"></script>
 
 
 <script>
@@ -126,8 +123,6 @@ $(document).ready(function() {
 </div>
 
 
-
-
 {% block scripts %}
 
 
@@ -135,15 +130,9 @@ $(document).ready(function() {
 
 <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
 
-{{ super() }}
-
-
-
-
+{{ JSGlue.include() }}
 
 
 {{ moment.include_moment() }}
-<script src="/static/ckeditor/ckeditor.js" type="text/javascript"></script>
-
 
 {% endblock %}

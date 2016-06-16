@@ -7,9 +7,61 @@ from form import Login
 from var_dump import var_dump
 from flask.ext.login import login_user, login_required, current_user, logout_user
 
+"""
+from werkzeug import secure_filename
+@knowledge.route('/ckupload/', methods=['POST', 'OPTIONS'])
+def ckupload():
+    #file/img upload interface
+    print "Trying to upload file..."
+    if request.method == 'POST':
+        print "Trying to upload file inside POST method"
+        f = request.files['file']
+        f.save(secure_filename(f.filename))
+        return 'file uploaded successfully'
+"""
+########################################################################################################
 
 
+def gen_rnd_filename():
+    import datetime, random
+    filename_prefix = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+    return '%s%s' % (filename_prefix, str(random.randrange(1000, 10000)))
 
+@knowledge.route('/ckupload/', methods=['POST', 'OPTIONS'])
+def ckupload():
+    """CKEditor file upload"""
+    import os
+    from flask import make_response
+    from manage import app
+    error = ''
+    url = ''
+    callback = request.args.get("CKEditorFuncNum")
+    if request.method == 'POST' and 'upload' in request.files:
+        fileobj = request.files['upload']
+        fname, fext = os.path.splitext(fileobj.filename)
+        rnd_name = '%s%s' % (gen_rnd_filename(), fext)
+        filepath = os.path.join(app.static_folder, 'upload', rnd_name)
+        dirname = os.path.dirname(filepath)
+        if not os.path.exists(dirname):
+            try:
+                os.makedirs(dirname)
+            except:
+                error = 'ERROR_CREATE_DIR'
+        elif not os.access(dirname, os.W_OK):
+            error = 'ERROR_DIR_NOT_WRITEABLE'
+        if not error:
+            fileobj.save(filepath)
+            url = url_for('static', filename='%s/%s' % ('upload', rnd_name))
+    else:
+        error = 'post error'
+    res = """<script type="text/javascript">
+             window.parent.CKEDITOR.tools.callFunction(%s, '%s', '%s');
+             </script>""" % (callback, url, error)
+    response = make_response(res)
+    response.headers["Content-Type"] = "text/html"
+    return response
+
+########################################################################################################
 #################################################
 #
 #
@@ -21,24 +73,40 @@ from flask.ext.login import login_user, login_required, current_user, logout_use
 
 def get_all_questions():
     from src.model import Question, Topic,User
-    question_topic = Question.query.join(Topic).join(User,User.id==Question.user_id).add_columns(User.email,Question.question, Question.date, Topic.topic_name, Question.id, Topic.question_id)\
-        .filter(Question.id == Topic.question_id).\
-                    order_by(Question.date.desc()).all()
+    question_topic = Question.query.join(Topic).join(User,User.id==Question.user_id).add_columns(User.email,Question.subject, Question.private,Question.question, Question.date, Topic.topic_name, Question.id, Topic.question_id)\
+        .filter(Question.id == Topic.question_id).filter(Question.private==0).all()
 
+    new_question_topic = [r for r in question_topic]
     #print len(question_topic)
     # If there is no question existing in system, redirect user to ask a question
     if(not question_topic):
         flash('Currently there is no question in database, ask a question')
         return redirect(url_for('knowledge.question'))
 
+    for q in question_topic:
+        print "Inside get_all_questions" + q.topic_name
 
     #Below logic is to create a set of topic, with same question there can be more than one tag and multiple entry for that in Topics table.
     compress_question_topic = {}
+
     seen = {}
-    for q_t in question_topic:
+
+    for q_t in new_question_topic:
         print q_t.id
         if q_t.id in seen:
-            q_t.topic_name += seen[q_t.id]
+
+            print "q_t has topic_name as " + q_t.topic_name
+            print "Seen has values as  " + seen[q_t.id]
+            print "question id is " + str(q_t.id)
+
+
+            q_t.topic_name = q_t.topic_name + str(seen[q_t.id])
+
+            #setattr(q_t, 'topic_name', q_t.topic_name + str(seen[q_t.id]))
+
+            print "New topic name is " + q_t.topic_name
+            #print "Topic name " + q_t.new_topic_name
+
             compress_question_topic[q_t.id] = q_t
             #print "Reading question is " + q_t.question
 
@@ -92,8 +160,9 @@ def index():
 
 
     question_with_visitor=[]
-    if (bool(get_all_questions()) and isinstance(get_all_questions(), dict)):
-        for question in get_all_questions().values():
+    questions_in_db = get_all_questions()
+    if (bool(questions_in_db) and isinstance(questions_in_db, dict)):
+        for question in questions_in_db.values():
             all_visitors = Visitor.query.filter(Visitor.question_id==question.id).count()
             question.visitor = all_visitors
             question_with_visitor.append(question)
@@ -126,12 +195,10 @@ def index():
 @login_required
 def my_questions():
     from src.model import Topic, Question,User
-    #my_questions = Question.query.filter_by(user_id=current_user.id).all()
 
-    question_topic = Question.query.join(Topic).join(User,User.id==Question.user_id).add_columns(User.email,Question.question, Question.date, Topic.topic_name, Question.user_id, Question.id, Topic.question_id)\
+    question_topic = Question.query.join(Topic).join(User,User.id==Question.user_id).add_columns(User.email,Question.subject, Question.private, Question.question, Question.date, Topic.topic_name, Question.user_id, Question.id, Topic.question_id)\
         .filter(Question.user_id == current_user.id)\
         .filter(Question.id == Topic.question_id).all()
-
 
     # If there is no question existing in system, redirect user to ask a question
     if(not question_topic):
@@ -151,7 +218,6 @@ def my_questions():
             compress_question_topic[q_t.id] = q_t
             seen[q_t.id] = " ,  " + q_t.topic_name
     return render_template('knowledge/my_questions.html', question_topic=compress_question_topic.values())
-
 
 #################################################
 #
@@ -174,8 +240,9 @@ def all_questions():
         Auth.AUTH_URI, access_type='offline')
     session['oauth_state'] = state
 #################################################################################
-    if (bool(get_all_questions()) and isinstance(get_all_questions(), dict)):
-        return render_template('knowledge/allquestions.html', question_topic=get_all_questions().values(),auth_url=auth_url)
+    question_in_db = get_all_questions()
+    if (bool(question_in_db) and isinstance(question_in_db, dict)):
+        return render_template('knowledge/allquestions.html', question_topic=question_in_db.values(),auth_url=auth_url)
     else:
         return render_template('knowledge/index.html', auth_url=auth_url, question_topic=[])
 
@@ -198,7 +265,7 @@ def question():
     if form.validate_on_submit():
         from src.model import Topic, db, Question
         my_data = form.question.data
-        question_obj = Question(question=my_data,user_id=current_user.id)
+        question_obj = Question(question=my_data,subject=form.subject.data, private=form.private.data, user_id=current_user.id)
 
         db.session.add(question_obj)
         db.session.commit()
@@ -223,7 +290,84 @@ def question():
     return render_template('knowledge/question.html', form=form)
 
 
+@knowledge.route('/question_autocomplete', methods=['GET'])
+@login_required
+def question_autocomplete():
+    search = request.args.get('term')
 
+    print "Searching for " + str(search)
+
+    from src.model import Question
+    from flask import jsonify
+    results = Question.query.with_entities(Question.subject, Question.id,Question.private,Question.user_id).filter(Question.subject.ilike('%'+search+'%')).all()
+    final_result=[]
+    for result in results:
+        t = (result.id,result.subject)
+        #take out private question which are not owned by same owner
+        if(result.private==1 and result.user_id == current_user.id):
+            final_result.append(t)
+        elif(result.private==0):
+            final_result.append(t)
+        else:
+            print "We are excluding question " + str(result.id)
+            print "result.user_id " + str(result.user_id)
+            print "current_user.id " + str(current_user.id)
+
+    return jsonify(result=final_result)
+
+#################################################
+
+@knowledge.route('/question/edit/<int:question_id>', methods = ['GET', 'POST'])
+@login_required
+def editable_question(question_id):
+    from src.model import db,Question
+
+    previous_question = Question.query.filter_by(id=question_id).first()
+
+    print "Current user id " + str(current_user.id)
+    print "previous answer user id " + str(previous_question.user_id)
+    if(current_user.id != previous_question.user_id):
+        flash("You can not modify this question")
+        return redirect(url_for('knowledge.answer', question_id=previous_question.id))
+    print "Rephrasing " + str(question_id)
+
+    form = EnterKnowledge()
+    form.question.data = previous_question.question
+    form.subject.data = previous_question.subject
+    if(previous_question.private):
+        form.private.data = 1
+    else:
+        form.private.data = 0
+
+    for topic in previous_question.topics:
+        print "Topics of previous question was " + topic.topic_name
+        form.topic.data.append(topic.topic_name)
+
+    #form.topic.data=topics
+
+    #answer = previous_answer.answer[3:]
+    #print "After removing para " + answer[:-6]
+    #form.answer.data = answer[:-6]
+
+    if form.validate_on_submit():
+
+
+        print "New data is " + request.form['question']
+
+        Question.query.filter_by(id=question_id).update(dict(question=request.form['question']))
+        Question.query.filter_by(id=question_id).update(dict(subject=request.form['subject']))
+
+        if 'private' in request.form:
+            print "Yes it has private field"
+            Question.query.filter_by(id=question_id).update(dict(private=1))
+        else:
+            Question.query.filter_by(id=question_id).update(dict(private=0))
+            flash("Updated Question as Publicly Viewable")
+        db.session.commit()
+        flash("Changes are saved!!")
+
+        return redirect(url_for('knowledge.answer', question_id=previous_question.id))
+    return render_template('knowledge/edit_question_form.html',form=form)
 
 #################################################
 #
@@ -237,15 +381,16 @@ def question():
 
 @knowledge.route('/question/<int:question_id>', methods = ['GET', 'POST'])
 def answer(question_id):
-    from src.model import db,Question,Answer,User, Upvote, Visitor
+    from src.model import db,Question,Answer,User, Upvote
 
-    #question_text = Question.query.filter_by(id=question_id).first()
-    question_text = Question.query.join(User).add_columns(Question.question, User.email, User.id, Question.user_id, Question.id, Question.date, Question.topics).filter(Question.id==question_id).first()
+    question_text = Question.query.join(User).add_columns(Question.question, User.email, User.id, Question.subject, Question.private, Question.user_id, Question.id, Question.date, Question.topics).filter(Question.id==question_id).first()
 
-
+    if(question_text.private==1 and question_text.email != current_user.email) :
+        flash("You do not own this private question with ID : " + str(question_text.id))
+        return redirect(url_for('knowledge.index'))
 
     #################################################################################
-    from src.model import get_google_auth, Visitor, Question
+    from src.model import get_google_auth, Visitor
     from config import Auth
 
     google = get_google_auth()
@@ -261,9 +406,6 @@ def answer(question_id):
             visitor.user_name=current_user.email
             db.session.commit()
 
-
-
-    #previous_answers = Answer.query.filter_by(question_id=question_id).all()
     previous_answers = Answer.query.join(User).add_columns(Answer.answer, Answer.date, Answer.user_id, Answer.question_id, User.email, User.id,Answer.id)\
 	                            .filter(Answer.question_id==question_id).filter(Answer.user_id==User.id).order_by(Answer.date.desc()).all()
 
@@ -351,28 +493,33 @@ def upvote(answer_id):
 
 
 
-@knowledge.route('/question/<int:question_id>/edit/<int:answer_id>', methods = ['GET', 'POST'])
-def editable_answer(question_id,answer_id):
+@knowledge.route('/answer/edit/<int:answer_id>', methods = ['GET', 'POST'])
+@login_required
+def editable_answer(answer_id):
     from src.model import db,Question,Answer,User
+    previous_answer = Answer.query.filter_by(id=answer_id).add_columns(Answer.answer, Answer.date, Answer.user_id,Answer.question_id,Answer.id).first()
+    print "Current user id " + str(current_user.id)
+    print "previous answer user id " + str(previous_answer.user_id)
+    if(current_user.id != previous_answer.user_id):
+        flash("You can not modify this answer")
+        return redirect(url_for('knowledge.answer', question_id=previous_answer.question_id))
+    print "Rephrasing " + str(answer_id)
 
-    question_text = Question.query.filter_by(id=question_id).first()
-    #previous_answers = Answer.query.filter_by(question_id=question_id).all()
-    previous_answers = Answer.query.join(User).add_columns(Answer.answer, Answer.date, Answer.user_id, Answer.question_id, User.email, User.id,Answer.id)\
-	                            .filter(Answer.question_id==question_id).filter(Answer.user_id==User.id).all()
+    form = AnswerForm(answer_text=previous_answer.answer)
+    form.answer.data = previous_answer.answer
+    #answer = previous_answer.answer[3:]
+    #print "After removing para " + answer[:-6]
+    #form.answer.data = answer[:-6]
 
-
-    if not current_user.is_authenticated():
-        flash('View only mode, login to modify')
-        return render_template('knowledge/answer.html',question_text = question_text, previous_answers = previous_answers)
-
-    form = AnswerForm()
     if form.validate_on_submit():
-        answer_obj = Answer(answer=form.answer.data, question_id = question_id, user_id=current_user.id)
-        db.session.add(answer_obj)
+        flash("Changes are saved!!")
+
+        print "New data is " + request.form['answer']
+        Answer.query.filter_by(id=answer_id).update(dict(answer=request.form['answer']))
         db.session.commit()
-        return render_template('knowledge/answer.html',question_text = question_text, previous_answers = previous_answers, form=form)
-    #print "Capturing and showing answers for question id " + str(question_id)
-    return render_template('knowledge/answer.html', question_text = question_text, previous_answers = previous_answers, form=form)
+        return redirect(url_for('knowledge.answer', question_id=previous_answer.question_id))
+    return render_template('knowledge/edit_answer_form.html',form=form)
+
 
 
 #################################################
@@ -415,7 +562,6 @@ def preference():
     #from .. import db
     #current_prefernces = Topic.query.with_entities(Topic.topic_name).filter_by(user_id=current_user.id).all()
     current_prefernces = Topic.query.filter_by(user_id=current_user.id).all()
-
 
 
     if form.validate_on_submit():
@@ -488,7 +634,6 @@ def mail_message(question,answer, topics):
 #
 #################################################
 
-
 @knowledge.route('/login')
 def login():
     from src.model import get_google_auth
@@ -501,9 +646,6 @@ def login():
         Auth.AUTH_URI, access_type='offline')
     session['oauth_state'] = state
     return render_template('knowledge/login.html', auth_url=auth_url)
-
-
-
 
 #################################################
 # Purpose: CallBack
@@ -538,6 +680,7 @@ def callback():
         # successfully authenticated our app.
 
         google = get_google_auth()
+        """
         if ( 'oauth_state' in session):
             google = get_google_auth(state=session['oauth_state'])
         try:
@@ -547,7 +690,12 @@ def callback():
                 authorization_response=request.url)
         except HTTPError:
             return 'HTTPError occurred.'
+        """
 
+        token = google.fetch_token(
+            Auth.TOKEN_URI,
+            client_secret=Auth.CLIENT_SECRET,
+            authorization_response=request.url)
         google = get_google_auth(token=token)
         resp = google.get(Auth.USER_INFO)
         if resp.status_code == 200:

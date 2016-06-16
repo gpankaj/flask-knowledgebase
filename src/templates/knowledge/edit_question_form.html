@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block replace_login_url %}
+    <a href="{{auth_url}}" class="navbar-brand">Login with Google</a>
+{% endblock %}
+
+{% block page_content  %}
+<div class="container">
+
+ <form method="POST">
+
+    {{ form.hidden_tag() }}
+
+     <h4>Your Question:</h4>
+
+     {{form.subject.label}} &nbsp; {{form.subject(size=150)}}
+     <br><br>
+     {{form.private.label}} &nbsp; {{form.private}} &nbsp;&nbsp; (can only be seen by you)
+     <br><br>
+     {{ form.question(class='ckeditor') }}
+     <br>
+     <h4>Select Topic(s) Matching your Question : <br> <ul align="center">{{ form.topic }}
+     </ul>
+     </h4>
+    {{ form.submit(class="btn btn-default btn-lg btn-primary") }}
+
+     <form>
+            <div id="field" align="right"><input autocomplete="off" class="input" id="field1" name="prof1" type="text" placeholder="Not found-request new tags" data-items="8"/><button id="b1" class="btn add-more" type="button">+</button></div>
+     </form>
+</form>
+
+</div>
+
+{% endblock %}
+

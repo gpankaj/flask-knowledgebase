@@ -4,6 +4,7 @@ import os
 
 class Auth:
     """Google Project Credentials"""
+
     CLIENT_ID = ('563959952938-r23rkq28rs5mm3netmk9di3ne8kpr3f8.apps.googleusercontent.com')
     CLIENT_SECRET = 'KLn0sUmsXUkEfviIUsabmaAr'
     REDIRECT_URI = 'http://localhost:5000/gCallback'
