@@ -2,20 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="151a4fe4-95be-493b-a21e-95dd1d4e17c3" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/static/ckeditor/plugins/dragdrop/LICENSE" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/static/ckeditor/plugins/dragdrop/README.md" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/static/ckeditor/plugins/dragdrop/dragdrop/plugin.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/static/ckeditor/plugins/dragdrop/plugin.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/static/ckeditor/plugins/imagepaste/pastebase64/plugin.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/knowledge/form.py" afterPath="$PROJECT_DIR$/src/knowledge/form.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/knowledge/routes.py" afterPath="$PROJECT_DIR$/src/knowledge/routes.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/model.py" afterPath="$PROJECT_DIR$/src/model.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/static/ckeditor/config.js" afterPath="$PROJECT_DIR$/src/static/ckeditor/config.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/static/styles.css" afterPath="$PROJECT_DIR$/src/static/styles.css" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/templates/base.html" afterPath="$PROJECT_DIR$/src/templates/base.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/templates/knowledge/answer.html" afterPath="$PROJECT_DIR$/src/templates/knowledge/answer.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/templates/knowledge/edit_answer_form.html" afterPath="$PROJECT_DIR$/src/templates/knowledge/edit_answer_form.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/templates/knowledge/question.html" afterPath="$PROJECT_DIR$/src/templates/knowledge/question.html" />
     </list>
     <ignored path="kb2016.iws" />
@@ -45,8 +34,8 @@
       <file leaf-file-name="form.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/knowledge/form.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="578">
-              <caret line="52" column="97" selection-start-line="52" selection-start-column="97" selection-end-line="52" selection-end-column="97" />
+            <state relative-caret-position="542">
+              <caret line="52" column="45" selection-start-line="52" selection-start-column="45" selection-end-line="52" selection-end-column="45" />
               <folding />
             </state>
           </provider>
@@ -65,8 +54,8 @@
       <file leaf-file-name="question.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/templates/knowledge/question.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="465">
-              <caret line="91" column="25" selection-start-line="91" selection-start-column="25" selection-end-line="91" selection-end-column="25" />
+            <state relative-caret-position="275">
+              <caret line="25" column="21" selection-start-line="25" selection-start-column="21" selection-end-line="25" selection-end-column="21" />
               <folding>
                 <element signature="n#style#0;n#div#0;n#form#0;n#div#0;n#!!top" expanded="true" />
               </folding>
@@ -84,22 +73,24 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="styles.css" pinned="false" current-in-tab="false">
+      <file leaf-file-name="styles.css" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/static/styles.css">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="598">
-              <caret line="76" column="0" selection-start-line="76" selection-start-column="0" selection-end-line="76" selection-end-column="0" />
+            <state relative-caret-position="289">
+              <caret line="17" column="13" selection-start-line="17" selection-start-column="13" selection-end-line="17" selection-end-column="13" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="answer.html" pinned="false" current-in-tab="true">
+      <file leaf-file-name="answer.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/templates/knowledge/answer.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="530">
-              <caret line="116" column="39" selection-start-line="116" selection-start-column="39" selection-end-line="116" selection-end-column="39" />
-              <folding />
+            <state relative-caret-position="513">
+              <caret line="35" column="57" selection-start-line="35" selection-start-column="57" selection-end-line="35" selection-end-column="57" />
+              <folding>
+                <marker date="1466355942434" expanded="false" signature="1074:1088" placeholder="..." />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -201,12 +192,12 @@
         <option value="$PROJECT_DIR$/src/static/ckeditor/config.js" />
         <option value="$PROJECT_DIR$/src/model.py" />
         <option value="$PROJECT_DIR$/src/templates/knowledge/edit_answer_form.html" />
-        <option value="$PROJECT_DIR$/src/knowledge/form.py" />
-        <option value="$PROJECT_DIR$/src/templates/knowledge/question.html" />
-        <option value="$PROJECT_DIR$/src/static/styles.css" />
         <option value="$PROJECT_DIR$/src/templates/base.html" />
         <option value="$PROJECT_DIR$/src/knowledge/routes.py" />
+        <option value="$PROJECT_DIR$/src/templates/knowledge/question.html" />
+        <option value="$PROJECT_DIR$/src/knowledge/form.py" />
         <option value="$PROJECT_DIR$/src/templates/knowledge/answer.html" />
+        <option value="$PROJECT_DIR$/src/static/styles.css" />
       </list>
     </option>
   </component>
@@ -1031,14 +1022,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/knowledge/form.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="578">
-          <caret line="52" column="97" selection-start-line="52" selection-start-column="97" selection-end-line="52" selection-end-column="97" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/static/readmore.min.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -1051,22 +1034,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/static/styles.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="598">
-          <caret line="76" column="0" selection-start-line="76" selection-start-column="0" selection-end-line="76" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/templates/base.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="405">
-          <caret line="29" column="0" selection-start-line="29" selection-start-column="0" selection-end-line="29" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -1103,16 +1070,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/templates/knowledge/question.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="465">
-          <caret line="91" column="25" selection-start-line="91" selection-start-column="25" selection-end-line="91" selection-end-column="25" />
-          <folding>
-            <element signature="n#style#0;n#div#0;n#form#0;n#div#0;n#!!top" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/knowledge/routes.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="499">
@@ -1121,10 +1078,46 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/templates/base.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="405">
+          <caret line="29" column="0" selection-start-line="29" selection-start-column="0" selection-end-line="29" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/templates/knowledge/question.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="275">
+          <caret line="25" column="21" selection-start-line="25" selection-start-column="21" selection-end-line="25" selection-end-column="21" />
+          <folding>
+            <element signature="n#style#0;n#div#0;n#form#0;n#div#0;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/knowledge/form.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="542">
+          <caret line="52" column="45" selection-start-line="52" selection-start-column="45" selection-end-line="52" selection-end-column="45" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/templates/knowledge/answer.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="530">
-          <caret line="116" column="39" selection-start-line="116" selection-start-column="39" selection-end-line="116" selection-end-column="39" />
+        <state relative-caret-position="513">
+          <caret line="35" column="57" selection-start-line="35" selection-start-column="57" selection-end-line="35" selection-end-column="57" />
+          <folding>
+            <marker date="1466355942434" expanded="false" signature="1074:1088" placeholder="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/static/styles.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="289">
+          <caret line="17" column="13" selection-start-line="17" selection-start-column="13" selection-end-line="17" selection-end-column="13" />
           <folding />
         </state>
       </provider>

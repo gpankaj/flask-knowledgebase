@@ -9,7 +9,7 @@
 
 <div class="container" >
 
-    <div >
+    <div>
         <h6 align="right"><a href='{{ url_for("knowledge.editable_question",question_id=question_text.id)}}' >Rephrase Question</a></h6>
         <h2 align="center"> {{question_text.subject }}</h2>
     </div>
@@ -30,9 +30,10 @@
 <hr width="90%" size=10 style="color: #0000cc">
 <hr width="90%" size=10 style="color: #0000cc">
     {% for p_answer in previous_answers %}
+    <div class="highlight">
     {% set count = loop.index  %}
     <hr>
-    <h7 align="center" style="background-color: #FFFF00; align-content: center">
+    <h7 align="center" style="background-color: lightblue; align-content: center">
 
         Below Answer was Upvoted: {{p_answer.upvote}} times , {{moment(p_answer.date,local=True).fromNow() }} ,  Author: {{p_answer.email}}
     </h7>
@@ -75,6 +76,7 @@
 
 
     <hr>
+    </div>
     {% endfor %}
 
 
@@ -117,6 +119,9 @@
         $('#comment'+answer_index).hide();
     }
 </script>
+
+
+
 
 
 {% endblock %}

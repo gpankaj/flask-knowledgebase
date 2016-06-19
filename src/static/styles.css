@@ -1,7 +1,6 @@
 .first-column {
   width: 20%;
   float: left;
-  margin-left:150px;
 
 }
 
@@ -15,7 +14,8 @@ tfoot input {
 
 #answer{
     width:900px;
-    background:#f3f3f3;
+    background: transparent;
+    margin: 5px;
 }
 
 #identity{
@@ -74,3 +74,7 @@ select {
 
 
 
+.highlight {
+    outline: 1px solid darkblue;
+    background: transparent;
+}
