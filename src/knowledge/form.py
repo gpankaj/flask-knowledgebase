@@ -17,7 +17,7 @@ class EnterKnowledge(Form, CKEditor):
     #question = StringField('Question', validators=[Required(), Length(1, 64)], body=WysiwygField(u"texteditor",validators=[Required()])
     #question = WysiwygField("txteditor", validators=[Required()])
     subject = StringField('Title')
-    question = TextAreaField('Question')
+    question = TextAreaField('Question',render_kw={"placeholder": "Please type your question details here.."})
 
     topic = SelectMultipleField('Topic',default='unknown', choices=[('Jenkins', 'Jenkins'), ('Perforce', 'Perforce'), ('Git', 'Git'),
                                                  ('Ec','Electric Command'), ('unix','unix'),('unknown','No Topic Set'), ('aws','AWS'),('flask','Python Flask'),('angular','Angular'),
@@ -50,7 +50,7 @@ class Preference(Form):
     submit = SubmitField('Submit')
 
 class AnswerForm(Form,CKEditor):
-    answer = TextAreaField('answer')
+    answer_text = TextAreaField('answer_text',render_kw={"placeholder": "Please type your answer here.."})
     submit = SubmitField('submit')
 
 class UpvoteForm(Form):

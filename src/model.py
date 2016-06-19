@@ -44,7 +44,7 @@ class Answer(db.Model):
     id= db.Column(db.Integer, primary_key=True)
     question_id = db.Column(db.Integer,ForeignKey('questions.id'))
     #user_uid = db.Column(db.String(20))
-    answer = db.Column(db.String(5026), nullable=False)
+    answer = db.Column(db.TEXT(524288), nullable=False)
     # One Answer will have one user name
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     date = db.Column(DateTime, default=func.now())
@@ -83,11 +83,22 @@ class Topic(db.Model):
 class Blog(db.Model):
     __tablename__='blogs'
     id = db.Column(db.Integer, primary_key=True)
-    answer = db.Column(db.String(5026), nullable=False)
+    subject = db.Column(db.String(256), nullable=False)
+    blog_text = db.Column(db.UnicodeText, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     private = db.Column(db.Boolean, default=False)
     visitor_count = db.Column(db.Integer)
+    date = db.Column(DateTime, default=func.now())
 
+class Comment(db.Model):
+    __tablename__='comments'
+    id = db.Column(db.Integer, primary_key=True)
+    answer_id = db.Column(db.Integer, ForeignKey('answers.id'))
+    comment_text = db.Column(db.String(512), nullable=False)
+    question_id = db.Column(db.Integer, ForeignKey('questions.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    date = db.Column(DateTime, default=func.now())
+    offensive = db.Column(db.Boolean,default=False)
 
 
 class User(UserMixin,db.Model):
@@ -113,6 +124,7 @@ class User(UserMixin,db.Model):
     questions = db.relationship('Question', backref='author', lazy='dynamic')
     answers = db.relationship('Answer', backref='author', lazy='dynamic')
     topics = db.relationship('Topic', backref='author', lazy='dynamic')
+    comments = db.relationship('Comment', backref = 'author', lazy='dynamic')
 
 @login_manager.user_loader
 def load_user(user_id):

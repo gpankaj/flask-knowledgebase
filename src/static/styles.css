@@ -19,7 +19,7 @@ tfoot input {
 }
 
 #identity{
-    width:300px;
+    width:600px;
     background:#d3d3d3;
 }
 
@@ -71,3 +71,6 @@ select {
     height:auto;
     alignment: right;
 }
+
+
+

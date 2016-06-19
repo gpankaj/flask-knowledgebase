@@ -14,31 +14,40 @@
 
     <form method="POST" onsubmit="myFunction()">
         {{ form.hidden_tag() }}
-        <h4>Your Answer:</h4> {{ form.answer(class='ckeditor') }}
+        <h4>Your Answer:</h4> {{ form.answer_text }}
         {{ form.submit(class="btn btn-default btn-lg btn-primary") }}
     </form>
 
-    <script>
-        //updated =  $("#answer").val();
-        modified_data =""
-        var editor = CKEDITOR.replace( 'answer' );
-        // The "change" event is fired whenever a change is made in the editor.
-        editor.on( 'change', function( evt ) {
-            // getData() returns CKEditor's HTML content.
-            //console.log( 'Total bytes: ' + evt.editor.getData() );
-            modified_data = evt.editor.getData();
-        });
-
-        function myFunction() {
-            console.log("submitted" + modified_data);
-
-        }
-
-    </script>
 
     <a target="_blank" href="https://en.wikipedia.org/wiki/Markdown#Example">Help on text formatting</a>
     {% endif %}
 
 </div>
+
+<script>
+$(document).ready(function() {
+    //$('#answer_text').hide()
+    $('#answer_text').summernote({
+        height: 200,                 // set editor height
+        minHeight: null,             // set minimum height of editor
+        maxHeight: null,             // set maximum height of editor
+        focus: false,
+        toolbar: [
+            ['style', ['bold', 'italic', 'underline', 'clear']],
+            ['fontsize', ['fontsize']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['height', ['height']],
+        ],
+        oninit: function () {
+            //$('.note-editable').attr('data-bind', 'html: Description');
+            //var test = $(this).closest('.note-editor').siblings('textarea');
+            //$(".summernote").code('data-bind', 'html: Description');
+            //var content = $('#answer_text').html($('#summernote').code());
+            //console.log("content is " + content)
+        }
+    })
+});
+</script>
 
 {% endblock %}

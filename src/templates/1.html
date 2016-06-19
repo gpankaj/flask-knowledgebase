@@ -52,10 +52,9 @@
 
             <form class="form-inline" hidden id="comment{{count}}" name="comment">
                 <div class="form-group">
-                    <textarea class="form-control" id="comment_text{{loop.index}}"></textarea>
+                    <textarea class="form-control" id="comment_text"></textarea>
                 </div>
-                <button class="btn btn-default" onclick="refreshAnswerComments('{{loop.index}}','{{p_answer.id}}','{{p_answer.question_id}}');return false;">Submit</button>
-                <button class="btn btn-default" onclick="cancelComment('{{loop.index}}'); return false;">Cancel</button>
+                <button class="btn btn-default" onclick="refreshAnswerComments(this,'{{p_answer.id}}','{{p_answer.question_id}}')">Submit</button>
             </form>
     {% endif %}
 
@@ -97,25 +96,10 @@
 </div>
 
 
-
+<!--http://code-tricks.com/jquery-read-more-less-example/-->
 <script>
-    function addComment(answer_index, answer_id) {
-        $('#comment'+answer_index).show();
-    }
-    function cancelComment(answer_index){
-        $('#comment'+answer_index).hide();
-    }
-    function refreshAnswerComments(loop_index, answer_id, question_id) {
-        $.ajax({
-                type: 'GET',
-                url: '/capture_comment?answer_id=' + answer_id + '&comment_text=' + $("#comment_text"+loop_index).val() + '&question_id='+ question_id,
-               success : function(data) {
-                    //... your other code
-                    //location.reload(); //reload the page on the success
-                }
-        });
-        $('#comment'+answer_index).hide();
-    }
+
+
 </script>
 
 

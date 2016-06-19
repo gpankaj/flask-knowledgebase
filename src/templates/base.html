@@ -1,16 +1,68 @@
-{% extends "bootstrap/base.html" %}
+<!---
+<script   src="https://code.jquery.com/jquery-2.2.3.js"   integrity="sha256-laXWtGydpwqJ8JA+X9x2miwmaiKhn8tVmOVEigRNtP4="   crossorigin="anonymous"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+-->
 
+<!-- include libraries(jQuery, bootstrap) -->
+
+<link href="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css" rel="stylesheet">
+<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+<script src="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js"></script>
+
+<script type="text/javascript" src="http://viralpatel.net/blogs/demo/jquery/jquery.shorten.1.0.js"></script>
+
+<!-- include codemirror (codemirror.css, codemirror.js, xml.js, formatting.js) -->
+<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.20.0/codemirror.css">
+<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.20.0/theme/monokai.css">
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.20.0/codemirror.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.20.0/mode/xml/xml.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/codemirror/2.36.0/formatting.js"></script>
+<!--<script type="javascript" src="{{url_for('static',filename='readmore.min.js')}}"/>-->
+<!--
+{% extends "bootstrap/base.html" %}
+-->
 {% import "bootstrap/wtf.html" as wtf %}
 
 {% block title %}Quick Knowledge Base - Engineering Tools{% endblock %}
 
 {% block head %}
+
+
+
+<!-- Below code is for wysiwyg implementation using summernote-->
+<script>
+
+$(document).ready(function() {
+    //$('#answer_text').hide()
+    $('#answer_text, #question').summernote({
+        height: 300,                 // set editor height
+        minHeight: null,             // set minimum height of editor
+        maxHeight: null,             // set maximum height of editor
+        focus: false,
+        dialogsInBody: true,
+        placeholder: 'start typing details here...',
+        toolbar: [
+            ['style', ['bold', 'italic', 'underline', 'clear']],
+            ['fontsize', ['fontsize']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['height', ['height']],
+        ],
+        oninit: function () {
+            //$('.note-editable').attr('data-bind', 'html: Description');
+            //var test = $(this).closest('.note-editor').siblings('textarea');
+            //$(".summernote").code('data-bind', 'html: Description');
+            //var content = $('#answer_text').html($('#summernote').code());
+            //console.log("content is " + content)
+        }
+    })
+});
+
+</script>
+
 <!--http://codepen.io/adobewordpress/pen/gbewLV     USEFUL FOR SEARCH FEATURE ON TABLE-->
-
-<script   src="https://code.jquery.com/jquery-2.2.3.js"   integrity="sha256-laXWtGydpwqJ8JA+X9x2miwmaiKhn8tVmOVEigRNtP4="   crossorigin="anonymous"></script>
-<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
-<script src="/static/ckeditor/ckeditor.js" type="text/javascript"></script>
-
+<!--<script src="/static/ckeditor/ckeditor.js" type="text/javascript"></script>-->
 
 <script>
 $(document).ready(function() {
@@ -128,7 +180,14 @@ $(document).ready(function() {
 
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
 
+
+
+<!--
 <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+-->
+<!-- include summernote css/js-->
+<link href="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.1/summernote.css" rel="stylesheet">
+<script src="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.1/summernote.js"></script>
 
 {{ JSGlue.include() }}
 

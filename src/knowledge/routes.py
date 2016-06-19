@@ -384,13 +384,16 @@ def answer(question_id):
     from src.model import db,Question,Answer,User, Upvote
 
     question_text = Question.query.join(User).add_columns(Question.question, User.email, User.id, Question.subject, Question.private, Question.user_id, Question.id, Question.date, Question.topics).filter(Question.id==question_id).first()
-
-    if(question_text.private==1 and question_text.email != current_user.email) :
-        flash("You do not own this private question with ID : " + str(question_text.id))
+    if (not question_text):
+        flash( str(question_id) + 'This question does not exist. Redirecting to index page')
         return redirect(url_for('knowledge.index'))
+    if (current_user.is_authenticated()):
+        if(question_text.private==1 and question_text.email != current_user.email) :
+            flash("You do not own this private question with ID : " + str(question_text.id))
+            return redirect(url_for('knowledge.index'))
 
     #################################################################################
-    from src.model import get_google_auth, Visitor
+    from src.model import get_google_auth, Visitor,Comment
     from config import Auth
 
     google = get_google_auth()
@@ -410,17 +413,25 @@ def answer(question_id):
 	                            .filter(Answer.question_id==question_id).filter(Answer.user_id==User.id).order_by(Answer.date.desc()).all()
 
 
+
     all_visitors = Visitor.query.filter(Visitor.question_id==question_id).count()
     # Add visitor data to question_text object
     question_text.visitors = all_visitors
 
     #UserImage.query.filter(UserImage.user_id == 1).count()
     previous_answers_with_upvote = []
+
     for previous_answer in previous_answers:
         upvoted_answer = Upvote.query.filter_by(answer_id=previous_answer.id).count()
         print "upvoted_answer" + str(upvoted_answer)
         previous_answer.upvote = upvoted_answer
+
+        comments_of_answer = Comment.query.filter_by(answer_id=previous_answer.id).all()
+        previous_answer.comments = comments_of_answer
+
         previous_answers_with_upvote.append(previous_answer)
+
+
 
     if not current_user.is_authenticated():
         flash('View only mode, login to modify')
@@ -438,9 +449,9 @@ def answer(question_id):
 
         if form.validate_on_submit():
             import re
-            if  ( re.match('', form.answer.data)):
-                if ( re.match('[^\s]', form.answer.data)) :
-                    answer_obj = Answer(answer=form.answer.data, question_id = question_id, user_id=current_user.id)
+            if  ( re.match('', form.answer_text.data)):
+                if ( re.match('[^\s]', form.answer_text.data)) :
+                    answer_obj = Answer(answer=form.answer_text.data, question_id = question_id, user_id=current_user.id)
                     db.session.add(answer_obj)
                     db.session.commit()
                     #return render_template('knowledge/answer.html',question_text = question_text, previous_answers = previous_answers, form=form)
@@ -452,6 +463,25 @@ def answer(question_id):
         #print "Capturing and showing answers for question id " + str(question_id)
 
     return render_template('knowledge/answer.html', question_text = question_text, previous_answers = previous_answers_with_upvote, form=form, auth_url=auth_url)
+
+
+
+@knowledge.route('/capture_comment', methods=['GET'])
+@login_required
+def capture_comment():
+    from src.model import Comment,db
+    if (request.args.get('comment_text') and request.args.get('answer_id')):
+        add_comment_obj = Comment(answer_id= request.args.get('answer_id') , comment_text = request.args.get('comment_text'),user_id=current_user.id)
+        db.session.add(add_comment_obj)
+        db.session.commit()
+        print "Answer id was " + str(request.args.get('answer_id'))
+        print "Comment was " + request.args.get('comment_text')
+        flash("Success in adding comment")
+    else:
+        flash("Some problem...")
+    from flask import jsonify
+    #return redirect(url_for('knowledge.answer',question_id=request.args.get('question_id')))
+    return jsonify({'result': 'success'})
 
 
 
@@ -506,7 +536,7 @@ def editable_answer(answer_id):
     print "Rephrasing " + str(answer_id)
 
     form = AnswerForm(answer_text=previous_answer.answer)
-    form.answer.data = previous_answer.answer
+    #form.answer.data = previous_answer.answer
     #answer = previous_answer.answer[3:]
     #print "After removing para " + answer[:-6]
     #form.answer.data = answer[:-6]
@@ -514,8 +544,8 @@ def editable_answer(answer_id):
     if form.validate_on_submit():
         flash("Changes are saved!!")
 
-        print "New data is " + request.form['answer']
-        Answer.query.filter_by(id=answer_id).update(dict(answer=request.form['answer']))
+        print "New data is " + request.form['answer_text']
+        Answer.query.filter_by(id=answer_id).update(dict(answer=request.form['answer_text']))
         db.session.commit()
         return redirect(url_for('knowledge.answer', question_id=previous_answer.question_id))
     return render_template('knowledge/edit_answer_form.html',form=form)

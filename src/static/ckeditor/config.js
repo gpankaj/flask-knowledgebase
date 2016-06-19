@@ -20,8 +20,10 @@ CKEDITOR.editorConfig = function( config ) {
 	config.extraPlugins = 'notification';
 	config.extraPlugins = 'toolbar';
 	config.extraPlugins = 'button';
-	config.extraPlugins = 'imagepaste';
 	
+
+
+
 	config.toolbarGroups = [
 		{ name: 'clipboard',   groups: [ 'clipboard', 'undo' ] },
 		{ name: 'editing',     groups: [ 'find', 'selection', 'spellchecker' ] },
