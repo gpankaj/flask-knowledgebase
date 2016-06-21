@@ -79,6 +79,14 @@ class Topic(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     #user_uid = db.Column(db.String(20))
 
+class AllTopic(db.Model):
+    __tablename__='alltopics'
+    id = db.Column(db.Integer, primary_key=True)
+    topic_category = db.Column(db.String(32), nullable=False)
+    topic_name = db.Column(db.String(32), nullable=False)
+    date = db.Column(DateTime, default=func.now())
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+
 
 class Blog(db.Model):
     __tablename__='blogs'

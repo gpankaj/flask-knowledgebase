@@ -3,7 +3,7 @@ __author__ = 'pankajg'
 from flask.ext.wtf import Form
 
 from flask_wysiwyg.wysiwyg import WysiwygField
-from wtforms import StringField, PasswordField, BooleanField, SubmitField,SelectField, SelectMultipleField, TextAreaField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField,SelectField, SelectMultipleField, TextAreaField,validators
 from wtforms.validators import Required, Length, Email, EqualTo
 from flask.ext.login import login_user, login_required, current_user
 from flaskckeditor import CKEditor
@@ -13,6 +13,14 @@ class CKEditorForm(Form, CKEditor):
     title =  StringField()
     ckdemo = TextAreaField()
     submit = SubmitField('submit')
+
+class AddTopicForm(Form):
+    old_category = SelectField('Name of the category',choices="", validators=[validators.optional()])
+    new_category=StringField('Name of category if you want to add new',validators=[validators.optional()])
+
+    topic_name=StringField('Topic Name')
+    #private = BooleanField('Private', default=False)
+    submit = SubmitField('Submit')
 
 class EnterKnowledge(Form, CKEditor):
     #question = StringField('Question', validators=[Required(), Length(1, 64)], body=WysiwygField(u"texteditor",validators=[Required()])
@@ -56,7 +64,7 @@ class EnterKnowledge(Form, CKEditor):
                                                  ('Ec','Electric Command'), ('unix','unix'),('unknown','No Topic Set'), ('aws','AWS'),('flask','Python Flask'),('angular','Angular'),
                                                                  ('html','HTML'),('css','CSS'),('js','javascript')])"""
     #https://github.com/industrydive/wtforms_extended_selectfield
-    topic = ExtendedSelectField('Topic',choices=topic_group, render_kw={"multiple":True})
+    topic = ExtendedSelectField('Topic',choices=None, render_kw={"multiple":True})
 
     #topic = StringField('topic',render_kw={'multiple': True, "placeholder": "Categories which applies to above question...."},)
 

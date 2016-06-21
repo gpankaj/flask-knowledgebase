@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block replace_login_url %}
+    <a href="{{auth_url}}" class="navbar-brand">Login with Google</a>
+{% endblock %}
+
+{% block page_content  %}
+
+
+<div class="container">
+    <h4>
+Add new Category and Topic:
+        </h4>
+    <br>
+    <br>
+ <form method="POST">
+
+    {{ form.hidden_tag() }}
+
+     {{form.old_category.label}} &nbsp; {{form.old_category}}
+     {{form.new_category.label(hidden=True)}} &nbsp; {{form.new_category(hidden=True)}}
+     <div id="message"></div>
+<br><br>
+     {{form.topic_name.label}} &nbsp; {{form.topic_name}}
+
+<br>
+    {{ form.submit(class="btn btn-default btn-lg btn-primary") }}
+</form>
+
+
+
+</div>
+
+<script>
+    $( "#old_category" ).change(function () {
+        category = $( "select option:selected").text();
+        console.log("Category is " +category )
+        if (category =='_Add New_') {
+            $('#new_category').show().focus().attr("placeholder", "Name of new Category");
+        } else {
+            $('#new_category').hide()
+
+        }
+    })
+
+
+</script>
+
+{% endblock %}

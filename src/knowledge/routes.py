@@ -1,7 +1,7 @@
 
 from . import knowledge
 from flask import render_template, url_for, flash, redirect, request, abort, g, session
-from form import EnterKnowledge, AnswerForm
+from form import EnterKnowledge, AnswerForm,AddTopicForm
 from form import Preference, CKEditorForm
 from form import Login
 from var_dump import var_dump
@@ -262,6 +262,39 @@ def all_questions():
 @login_required
 def question():
     form = EnterKnowledge()
+    from src.model import Topic, db, Question,AllTopic
+
+    all_topics_with_categories = AllTopic.query.filter_by().all()
+    category_dict = {}
+    mid_array=[]
+    list_of_tuples=[]
+    topic_group = None
+
+    for all_topics_with_categorie in all_topics_with_categories:
+        if all_topics_with_categorie.topic_category == '_Add New_' or all_topics_with_categorie.topic_category == '_Add_New_':
+            print "Skipping adding _Add New_"
+            continue
+
+        if all_topics_with_categorie.topic_category in category_dict:
+            list_of_tuples = category_dict[all_topics_with_categorie.topic_category]
+            list_of_tuples.append((all_topics_with_categorie.topic_name, all_topics_with_categorie.topic_name))
+            category_dict[all_topics_with_categorie.topic_category] = list_of_tuples
+        else:
+            list_of_tuples.append((all_topics_with_categorie.topic_name,all_topics_with_categorie.topic_name))
+            category_dict[all_topics_with_categorie.topic_category] = list_of_tuples
+
+        # we need to remove previous items from list.
+        list_of_tuples=[]
+
+    # Below convert list to tuples in dict value.
+    for k,v in category_dict.items():
+        category_dict[k] = tuple(v)
+
+    topic_group = tuple(category_dict.iteritems())
+
+    print topic_group
+    form.topic.choices=topic_group
+
     if form.validate_on_submit():
         from src.model import Topic, db, Question
         my_data = form.question.data
@@ -296,6 +329,42 @@ def question():
 
         return redirect(url_for('knowledge.my_questions'))
     return render_template('knowledge/question.html', form=form)
+
+
+@knowledge.route('/add_topic',methods=['GET','POST'])
+@login_required
+def AddTopic():
+    form = AddTopicForm()
+    from src.model import AllTopic, db
+    all_categories_and_topics = AllTopic.query.filter_by().all()
+
+    form.old_category.choices=set([(all_categories_and_topic.topic_category, all_categories_and_topic.topic_category) for all_categories_and_topic in all_categories_and_topics])
+
+    if form.validate_on_submit():
+        try:
+            new_topic=None
+            if(form.new_category.data):
+                new_topic = AllTopic(topic_category=form.new_category.data,topic_name=form.topic_name.data, user_id=current_user.id)
+            elif(form.old_category.data):
+                print "Old category is " + form.old_category.data
+                new_topic = AllTopic(topic_category=form.old_category.data,topic_name=form.topic_name.data, user_id=current_user.id)
+            else:
+                flash('Error')
+                return redirect(url_for('knowledge.AddTopic'))
+
+            db.session.add(new_topic)
+            db.session.commit()
+            flash('Added topic : ' + form.topic_name.data  + " in category : " + new_topic.topic_category +" You can ask the question now selecting this category")
+            return redirect(url_for('knowledge.question'))
+
+        except Exception as e:
+            flash('Faiiled to add category... please retry ' + str(e.message))
+            return redirect(url_for('knowledge.AddTopic'))
+    else:
+        print "Old category is " + str(form.old_category.data)
+        print "Form not validated"
+
+    return render_template('knowledge/add_new_category.html',form=form)
 
 
 @knowledge.route('/question_autocomplete', methods=['GET'])
@@ -488,8 +557,8 @@ def capture_comment():
     else:
         flash("Some problem...")
     from flask import jsonify
-    #return redirect(url_for('knowledge.answer',question_id=request.args.get('question_id')))
-    return jsonify({'result': 'success'})
+    return redirect(url_for('knowledge.answer',question_id=request.args.get('question_id')))
+    #return jsonify({'result': 'success'})
 
 
 

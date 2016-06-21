@@ -30,6 +30,23 @@ manager = Manager(app)
 
 db.create_all()
 
+##################################################
+#create some initial data
+from src.model import  AllTopic
+obj_exists = AllTopic.query.filter_by().all()
+initilized = 0
+for obj in obj_exists:
+    if(obj.topic_category != '_Add New_'):
+        initilized=1
+
+if (initilized==0):
+    obj1 = AllTopic(topic_category='_Add New_', topic_name='_Add New_', user_id=1)
+    obj2 = AllTopic(topic_category='SCM', topic_name='Git', user_id=1)
+    db.session.add(obj1)
+    db.session.add(obj2)
+    db.session.commit()
+##################################################
+
 @manager.command
 def adduser(uid, admin=False):
     #Register a new User
