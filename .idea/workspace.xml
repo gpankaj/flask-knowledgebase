@@ -2,12 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="151a4fe4-95be-493b-a21e-95dd1d4e17c3" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/manage.py" afterPath="$PROJECT_DIR$/manage.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/knowledge/form.py" afterPath="$PROJECT_DIR$/src/knowledge/form.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/knowledge/routes.py" afterPath="$PROJECT_DIR$/src/knowledge/routes.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/model.py" afterPath="$PROJECT_DIR$/src/model.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/templates/knowledge/question.html" afterPath="$PROJECT_DIR$/src/templates/knowledge/question.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/templates/knowledge/answer.html" afterPath="$PROJECT_DIR$/src/templates/knowledge/answer.html" />
     </list>
     <ignored path="kb2016.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -56,7 +52,7 @@
       <file leaf-file-name="model.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1343">
+            <state relative-caret-position="884">
               <caret line="81" column="14" selection-start-line="81" selection-start-column="6" selection-end-line="81" selection-end-column="14" />
               <folding />
             </state>
@@ -73,11 +69,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="routes.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="routes.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/knowledge/routes.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="287">
-              <caret line="341" column="0" selection-start-line="341" selection-start-column="0" selection-end-line="341" selection-end-column="0" />
+            <state relative-caret-position="765">
+              <caret line="500" column="70" selection-start-line="500" selection-start-column="70" selection-end-line="500" selection-end-column="70" />
               <folding>
                 <element signature="e#1#24#0" expanded="true" />
               </folding>
@@ -107,6 +103,19 @@
           </provider>
         </entry>
       </file>
+      <file leaf-file-name="answer.html" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/templates/knowledge/answer.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="377">
+              <caret line="27" column="43" selection-start-line="27" selection-start-column="43" selection-end-line="27" selection-end-column="43" />
+              <folding>
+                <element signature="n#style#0;n#h6#3;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#h7#0;n#div#1;n#div#0;n#!!top" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="form.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/knowledge/form.py">
           <provider selected="true" editor-type-id="text-editor">
@@ -115,16 +124,6 @@
               <folding>
                 <element signature="e#24#54#0" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="preference.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/templates/knowledge/preference.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="272">
-              <caret line="16" column="14" selection-start-line="0" selection-start-column="0" selection-end-line="16" selection-end-column="14" />
-              <folding />
             </state>
           </provider>
         </entry>
@@ -196,7 +195,6 @@
         <option value="$PROJECT_DIR$/src/static/ckeditor/build-config.js" />
         <option value="$PROJECT_DIR$/src/static/ckeditor/config.js" />
         <option value="$PROJECT_DIR$/src/templates/knowledge/edit_answer_form.html" />
-        <option value="$PROJECT_DIR$/src/templates/knowledge/answer.html" />
         <option value="$PROJECT_DIR$/src/static/bootstrap-multiselect.css" />
         <option value="$PROJECT_DIR$/src/static/bootstrap-multiselect.js" />
         <option value="$PROJECT_DIR$/src/templates/base.html" />
@@ -205,9 +203,10 @@
         <option value="$PROJECT_DIR$/src/knowledge/form.py" />
         <option value="$PROJECT_DIR$/src/model.py" />
         <option value="$PROJECT_DIR$/src/templates/knowledge/question.html" />
-        <option value="$PROJECT_DIR$/src/knowledge/routes.py" />
         <option value="$PROJECT_DIR$/manage.py" />
         <option value="$PROJECT_DIR$/src/templates/knowledge/add_new_category.html" />
+        <option value="$PROJECT_DIR$/src/knowledge/routes.py" />
+        <option value="$PROJECT_DIR$/src/templates/knowledge/answer.html" />
       </list>
     </option>
   </component>
@@ -985,16 +984,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/templates/knowledge/answer.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="513">
-          <caret line="35" column="57" selection-start-line="35" selection-start-column="57" selection-end-line="35" selection-end-column="57" />
-          <folding>
-            <marker date="1466355942434" expanded="false" signature="1074:1088" placeholder="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/templates/knowledge/edit_answer_form.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="243">
@@ -1085,24 +1074,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/model.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1343">
-          <caret line="81" column="14" selection-start-line="81" selection-start-column="6" selection-end-line="81" selection-end-column="14" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/templates/knowledge/question.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="442">
-          <caret line="26" column="64" selection-start-line="26" selection-start-column="59" selection-end-line="26" selection-end-column="64" />
-          <folding>
-            <element signature="n#style#0;n#div#0;n#form#0;n#div#0;n#!!top" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/manage.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="464">
@@ -1127,12 +1098,41 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/model.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="884">
+          <caret line="81" column="14" selection-start-line="81" selection-start-column="6" selection-end-line="81" selection-end-column="14" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/templates/knowledge/question.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="442">
+          <caret line="26" column="64" selection-start-line="26" selection-start-column="59" selection-end-line="26" selection-end-column="64" />
+          <folding>
+            <element signature="n#style#0;n#div#0;n#form#0;n#div#0;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/knowledge/routes.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="287">
-          <caret line="341" column="0" selection-start-line="341" selection-start-column="0" selection-end-line="341" selection-end-column="0" />
+        <state relative-caret-position="765">
+          <caret line="500" column="70" selection-start-line="500" selection-start-column="70" selection-end-line="500" selection-end-column="70" />
           <folding>
             <element signature="e#1#24#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/templates/knowledge/answer.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="377">
+          <caret line="27" column="43" selection-start-line="27" selection-start-column="43" selection-end-line="27" selection-end-column="43" />
+          <folding>
+            <element signature="n#style#0;n#h6#3;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#h7#0;n#div#1;n#div#0;n#!!top" expanded="true" />
           </folding>
         </state>
       </provider>

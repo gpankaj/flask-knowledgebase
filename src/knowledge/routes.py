@@ -328,6 +328,8 @@ def question():
             db.session.commit()
 
         return redirect(url_for('knowledge.my_questions'))
+    else:
+        flash("Please fill all the required fields")
     return render_template('knowledge/question.html', form=form)
 
 
@@ -458,7 +460,7 @@ def editable_question(question_id):
 
 @knowledge.route('/question/<int:question_id>', methods = ['GET', 'POST'])
 def answer(question_id):
-    from src.model import db,Question,Answer,User, Upvote
+    from src.model import db,Question,Answer,User, Upvote,Topic
 
     question_text = Question.query.join(User).add_columns(Question.question, User.email, User.id, Question.subject, Question.private, Question.user_id, Question.id, Question.date, Question.topics).filter(Question.id==question_id).first()
     if (not question_text):
@@ -494,6 +496,9 @@ def answer(question_id):
     all_visitors = Visitor.query.filter(Visitor.question_id==question_id).count()
     # Add visitor data to question_text object
     question_text.visitors = all_visitors
+
+    topics_for_question = Topic.query.filter_by(question_id=question_text.id).first()
+    question_text.topics_for_question = topics_for_question.topic_name
 
     #UserImage.query.filter(UserImage.user_id == 1).count()
     previous_answers_with_upvote = []
