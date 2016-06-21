@@ -7,6 +7,7 @@ from wtforms import StringField, PasswordField, BooleanField, SubmitField,Select
 from wtforms.validators import Required, Length, Email, EqualTo
 from flask.ext.login import login_user, login_required, current_user
 from flaskckeditor import CKEditor
+from wtform_extended_selectfield import ExtendedSelectField
 
 class CKEditorForm(Form, CKEditor):
     title =  StringField()
@@ -19,9 +20,45 @@ class EnterKnowledge(Form, CKEditor):
     subject = StringField('Title')
     question = TextAreaField('Question')
 
-    topic = SelectMultipleField('Topic',default='unknown', choices=[('Jenkins', 'Jenkins'), ('Perforce', 'Perforce'), ('Git', 'Git'),
+
+    topic_group=(
+            ('SCM', (
+                ('Jenkins', 'Jenkins'),
+                ('Perforce', 'Perforce'),
+                ('Git', 'Git'),
+                ('Electric_Commander', 'ElectricCommander'),
+                ('Gerrit', 'Gerrit'),
+            )),
+            ('Unix', (
+                ('Unix', 'Unix'),
+                ('Shell', 'Shell'),
+            )),
+            ('Application Programming', (
+                ('Perl', 'Perl'),
+                ('Python', 'Python'),
+                ('Android', 'Android'),
+                ('Web', 'HTML/CSS/Jquery/JavaScript'),
+                ('C++', 'C++'),
+                ('Java', 'Java'),
+            )),
+            ('System Programming', (
+                ('Verilog', 'Verilog'),
+                ('C', 'C'),
+                ('C++','C++')
+            )),
+            ('Tools', (
+                ('Coverity', 'Coverity'),
+            )),
+
+        )
+    """
+    topic = SelectField('Topic',default='unknown', choices=[('Jenkins', 'Jenkins'), ('Perforce', 'Perforce'), ('Git', 'Git'),
                                                  ('Ec','Electric Command'), ('unix','unix'),('unknown','No Topic Set'), ('aws','AWS'),('flask','Python Flask'),('angular','Angular'),
-                                                                    ('html','HTML'),('css','CSS'),('js','javascript')])
+                                                                 ('html','HTML'),('css','CSS'),('js','javascript')])"""
+    #https://github.com/industrydive/wtforms_extended_selectfield
+    topic = ExtendedSelectField('Topic',choices=topic_group, render_kw={"multiple":True})
+
+    #topic = StringField('topic',render_kw={'multiple': True, "placeholder": "Categories which applies to above question...."},)
 
     private = BooleanField('Private')
     submit = SubmitField('Submit')
@@ -39,7 +76,7 @@ class Login(Form):
 
 class Preference(Form):
     #from ..model import db
-    subscription = SelectMultipleField('Modify Subscription',choices=[('Jenkins', 'Jenkins'), ('Perforce', 'Perforce'), ('Git', 'Git'),
+    subscription = SelectField('Modify Subscription',choices=[('Jenkins', 'Jenkins'), ('Perforce', 'Perforce'), ('Git', 'Git'),
                                                  ('Ec','Electric Command'), ('unix','unix'), ('aws','AWS'),('flask','Python Flask'),('angular','Angular'),
                                                                     ('html','HTML'),('css','CSS'),('js','javascript')])
 

@@ -269,10 +269,20 @@ def question():
 
         db.session.add(question_obj)
         db.session.commit()
-
+        """
         for t in form.topic.data:
             topic_obj = Topic(question_id=question_obj.id, topic_name = t)
             print "Topic is set to " + t
+            db.session.add(topic_obj)
+            db.session.commit()
+        """
+
+        #print "Topics are " + str(form.topic.choices)
+        # http://stackoverflow.com/questions/23205577/python-flask-immutablemultidict
+        print "request.values + " + str(request.values)
+        for item in request.form.getlist('topic'):
+            topic_obj = Topic(question_id=question_obj.id, topic_name=item)
+            print "Topic is set to " + item
             db.session.add(topic_obj)
             db.session.commit()
 
@@ -283,8 +293,6 @@ def question():
             print "Topic is set to " + "unknown"
             db.session.add(topic_obj)
             db.session.commit()
-
-
 
         return redirect(url_for('knowledge.my_questions'))
     return render_template('knowledge/question.html', form=form)
