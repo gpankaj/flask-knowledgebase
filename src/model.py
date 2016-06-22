@@ -84,6 +84,12 @@ class AllTopic(db.Model):
     topic_name = db.Column(db.String(32), nullable=False)
     date = db.Column(DateTime, default=func.now())
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    def __init__(self):
+        obj1 = AllTopic(topic_category='_Add New_', topic_name='_Add New_', user_id=1)
+        obj2 = AllTopic(topic_category='SCM', topic_name='Git', user_id=1)
+        db.session.add(obj1)
+        db.session.add(obj2)
+        db.session.commit()
 
 
 class Blog(db.Model):

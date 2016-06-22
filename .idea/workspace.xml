@@ -2,10 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="151a4fe4-95be-493b-a21e-95dd1d4e17c3" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/templates/1.html" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/manage.py" afterPath="$PROJECT_DIR$/manage.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/model.py" afterPath="$PROJECT_DIR$/src/model.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/templates/knowledge/question.html" afterPath="$PROJECT_DIR$/src/templates/knowledge/question.html" />
     </list>
     <ignored path="kb2016.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -34,8 +33,8 @@
       <file leaf-file-name="model.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="152">
-              <caret line="9" column="0" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="21" />
+            <state relative-caret-position="692">
+              <caret line="91" column="27" selection-start-line="91" selection-start-column="27" selection-end-line="91" selection-end-column="27" />
               <folding>
                 <element signature="e#25#105#0" expanded="true" />
               </folding>
@@ -43,11 +42,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="manage.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="manage.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/manage.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1156">
-              <caret line="68" column="30" selection-start-line="68" selection-start-column="4" selection-end-line="68" selection-end-column="30" />
+            <state relative-caret-position="414">
+              <caret line="27" column="27" selection-start-line="26" selection-start-column="8" selection-end-line="28" selection-end-column="27" />
               <folding />
             </state>
           </provider>
@@ -98,7 +97,7 @@
       <file leaf-file-name="__init__.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/__init__.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="539">
+            <state relative-caret-position="1054">
               <caret line="62" column="24" selection-start-line="62" selection-start-column="24" selection-end-line="62" selection-end-column="24" />
               <folding>
                 <element signature="e#24#47#0" expanded="true" />
@@ -111,7 +110,7 @@
         <entry file="file://$PROJECT_DIR$/src/templates/knowledge/question.html">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="442">
-              <caret line="26" column="80" selection-start-line="26" selection-start-column="65" selection-end-line="26" selection-end-column="80" />
+              <caret line="26" column="64" selection-start-line="26" selection-start-column="64" selection-end-line="26" selection-end-column="64" />
               <folding>
                 <element signature="n#style#0;n#div#0;n#form#0;n#div#0;n#!!top" expanded="true" />
               </folding>
@@ -129,7 +128,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="form.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="form.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/knowledge/form.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="261">
@@ -205,12 +204,12 @@
         <option value="$PROJECT_DIR$/src/knowledge/routes.py" />
         <option value="$PROJECT_DIR$/src/templates/knowledge/answer.html" />
         <option value="$PROJECT_DIR$/src/knowledge/form.py" />
-        <option value="$PROJECT_DIR$/src/templates/knowledge/question.html" />
-        <option value="$PROJECT_DIR$/src/model.py" />
         <option value="$PROJECT_DIR$/src/__init__.py" />
-        <option value="$PROJECT_DIR$/manage.py" />
         <option value="$PROJECT_DIR$/wsgi.py" />
         <option value="$PROJECT_DIR$/flask-knowledgebase.ini" />
+        <option value="$PROJECT_DIR$/manage.py" />
+        <option value="$PROJECT_DIR$/src/model.py" />
+        <option value="$PROJECT_DIR$/src/templates/knowledge/question.html" />
       </list>
     </option>
   </component>
@@ -677,7 +676,7 @@
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.218509" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.09850107" sideWeight="0.5021322" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.098143235" sideWeight="0.5021322" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -1041,8 +1040,8 @@
         <state relative-caret-position="377">
           <caret line="27" column="43" selection-start-line="27" selection-start-column="43" selection-end-line="27" selection-end-column="43" />
           <folding>
-            <element signature="n#style#0;n#h6#3;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#h7#0;n#div#1;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#h6#3;n#div#0;n#!!top" expanded="false" />
+            <element signature="n#style#0;n#h7#0;n#div#1;n#div#0;n#!!top" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1061,26 +1060,6 @@
           <caret line="500" column="70" selection-start-line="500" selection-start-column="70" selection-end-line="500" selection-end-column="70" />
           <folding>
             <element signature="e#1#24#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/templates/knowledge/question.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="442">
-          <caret line="26" column="80" selection-start-line="26" selection-start-column="65" selection-end-line="26" selection-end-column="80" />
-          <folding>
-            <element signature="n#style#0;n#div#0;n#form#0;n#div#0;n#!!top" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/knowledge/form.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="261">
-          <caret line="66" column="81" selection-start-line="66" selection-start-column="54" selection-end-line="66" selection-end-column="81" />
-          <folding>
-            <element signature="e#24#54#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1109,26 +1088,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/model.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="152">
-          <caret line="9" column="0" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="21" />
-          <folding>
-            <element signature="e#25#105#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="539">
-          <caret line="62" column="24" selection-start-line="62" selection-start-column="24" selection-end-line="62" selection-end-column="24" />
-          <folding>
-            <element signature="e#24#47#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/wsgi.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="51">
@@ -1137,11 +1096,51 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1054">
+          <caret line="62" column="24" selection-start-line="62" selection-start-column="24" selection-end-line="62" selection-end-column="24" />
+          <folding>
+            <element signature="e#24#47#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/model.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="692">
+          <caret line="91" column="27" selection-start-line="91" selection-start-column="27" selection-end-line="91" selection-end-column="27" />
+          <folding>
+            <element signature="e#25#105#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/manage.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1156">
-          <caret line="68" column="30" selection-start-line="68" selection-start-column="4" selection-end-line="68" selection-end-column="30" />
+        <state relative-caret-position="414">
+          <caret line="27" column="27" selection-start-line="26" selection-start-column="8" selection-end-line="28" selection-end-column="27" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/templates/knowledge/question.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="442">
+          <caret line="26" column="64" selection-start-line="26" selection-start-column="64" selection-end-line="26" selection-end-column="64" />
+          <folding>
+            <element signature="n#style#0;n#div#0;n#form#0;n#div#0;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/knowledge/form.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="261">
+          <caret line="66" column="81" selection-start-line="66" selection-start-column="54" selection-end-line="66" selection-end-column="81" />
+          <folding>
+            <element signature="e#24#54#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
