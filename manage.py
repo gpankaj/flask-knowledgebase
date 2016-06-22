@@ -3,13 +3,32 @@ import os
 #from src import db
 from src import create_app
 from flask.ext.script import Manager
-from src.model import User, db
+
 from flask.ext.admin import Admin
 
 
-
+from flask.ext.sqlalchemy import SQLAlchemy
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
+db = SQLAlchemy(app, use_native_unicode=True)
+db.create_all()
 
+
+def setup_db():
+    from src.model import AllTopic
+    obj_exists = AllTopic.query.filter_by().all()
+    initilized = 0
+    for obj in obj_exists:
+        if (obj.topic_category != '_Add New_'):
+            initilized = 1
+
+    if (initilized == 0):
+        obj1 = AllTopic(topic_category='_Add New_', topic_name='_Add New_', user_id=1)
+        obj2 = AllTopic(topic_category='SCM', topic_name='Git', user_id=1)
+        db.session.add(obj1)
+        db.session.add(obj2)
+        db.session.commit()
+
+#setup_db()
 
 import re
 from jinja2 import evalcontextfilter, Markup, escape
@@ -28,23 +47,13 @@ def nl2br(eval_ctx, value):
 admin = Admin(app)
 manager = Manager(app)
 
-db.create_all()
+
+
 
 ##################################################
 #create some initial data
-from src.model import  AllTopic
-obj_exists = AllTopic.query.filter_by().all()
-initilized = 0
-for obj in obj_exists:
-    if(obj.topic_category != '_Add New_'):
-        initilized=1
 
-if (initilized==0):
-    obj1 = AllTopic(topic_category='_Add New_', topic_name='_Add New_', user_id=1)
-    obj2 = AllTopic(topic_category='SCM', topic_name='Git', user_id=1)
-    db.session.add(obj1)
-    db.session.add(obj2)
-    db.session.commit()
+
 ##################################################
 
 @manager.command
@@ -57,6 +66,7 @@ def adduser(uid, admin=False):
         import sys
         sys.exit('Error : Password do not match')
     #db.create_all()
+    from src.model import User
     user = User(uid=uid, password = password, is_admin = admin )
     db.session.add(user)
     db.session.commit()

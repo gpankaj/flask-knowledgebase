@@ -7,11 +7,9 @@ from werkzeug.security import generate_password_hash, check_password_hash
 #from . import db
 from flask.ext.login import UserMixin
 from src import login_manager
-from flask.ext.sqlalchemy import SQLAlchemy
-from . import create_app
+from manage import db
 
 
-db = SQLAlchemy(create_app('development'), use_native_unicode=True)
 
 class Question(db.Model):
     __tablename__= 'questions'
