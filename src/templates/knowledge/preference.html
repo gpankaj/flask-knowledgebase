@@ -10,7 +10,7 @@
 
 
 <div class="container">
-    <h4>Previously selected topics are: {{ selected_options }}</h4>
+    <h4>Previously selected topics are: {{ ', '.join(selected_options) | safe }} </h4>
     {{ form.hidden_tag() }}
     {{ wtf.quick_form(form) }}
 </div>

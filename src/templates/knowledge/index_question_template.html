@@ -103,6 +103,11 @@
       email_in_field = $("#email"+question_id).val();
       console.log(email_in_field);
       console.log(emails);
+      console.log("question_id " + question_id)
+      console.log("email " + $("#email"+question_id).val())
+      console.log("requesting_user_id " + requesting_user_id)
+
+
       if (emails.indexOf(email_in_field) > -1) {
         $('#email'+question_id).focus();
         console.log("Answer from this question was already asked from " + $("#email"+question_id).val());
@@ -112,18 +117,22 @@
 
 
       $.ajax({
-                type: 'GET',
-                url: '/capture_email?question_id=' + question_id + '&email_id=' + $("#email"+question_id).val() + '&requesting_user_id='+ requesting_user_id,
-                success : function(data) {
-                    window.location.reload();
+                type: 'POST',
+                data: {
+                    format: 'json'
+                  },
+                dataType: 'json',
+                data: { question_id: question_id,email_id: $("#email"+question_id).val(),requesting_user_id: requesting_user_id },
+                url: '/capture_email',
+                success : function(response) {
+                  window.location.reload();
                 },
                 error: function (data) {
-                  console.log("Error message " + data)
-
+                    console.log(data);
                 }
         });
       $('#request_question'+question_id).hide();
-      return true;
+      return false;
     };
 
   </script>

@@ -117,21 +117,22 @@
     };
     function refreshAnswerComments(loop_index, answer_id, question_id) {
         $.ajax({
-                type: 'GET',
-                url: '/capture_comment?answer_id=' + answer_id + '&comment_text=' + $("#comment_text"+loop_index).val() + '&question_id='+ question_id,
-               success : function(data) {
+                type: 'POST',
+                data: { format: 'json'},
+                dataType: 'json',
+                data : {answer_id: answer_id, comment_text : $("#comment_text"+loop_index).val(), question_id:question_id},
+                url: '/capture_comment',
+               success : function(response) {
                     //... your other code
-                    location.reload(); //reload the page on the success
-                    return false;
+                    window.location.reload(); //reload the page on the success
                 },
                 error: function (data) {
                     console.log(data);
-                    return false;
                 }
         });
 
-        //$('#comment'+answer_id).hide();
-        return true;
+        $('#comment'+answer_id).hide();
+        return false;
     };
 </script>
 

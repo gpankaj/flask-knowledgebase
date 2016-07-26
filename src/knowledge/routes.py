@@ -113,8 +113,8 @@ def get_all_questions(my_only=False):
         flash('Currently there is no question asked by you, ask a question. Redirecting to index page')
         return redirect(url_for('knowledge.question'))
 
-    for q in question_topic:
-        print "Inside get_all_questions" + q.topic_name
+    #for q in question_topic:
+        #print "Inside get_all_questions" + q.topic_name
 
     #Below logic is to create a set of topic, with same question there can be more than one tag and multiple entry for that in Topics table.
     compress_question_topic = {}
@@ -122,7 +122,7 @@ def get_all_questions(my_only=False):
     seen = {}
 
     for q_t in new_question_topic:
-        print q_t.id
+
         if q_t.id in seen:
 
             print "q_t has topic_name as " + q_t.topic_name
@@ -143,7 +143,7 @@ def get_all_questions(my_only=False):
 
         else:
             #print "Inside Else block  question is " + q_t.question
-            print "Added first time..."
+            #print "Added first time..."
             compress_question_topic[q_t.id] = q_t
             seen[q_t.id] = q_t.topic_name
     #print len(compress_question_topic)
@@ -223,8 +223,6 @@ def index():
                                                                                   AnswerRequestedFromTable.requester_email_id). \
                                                                                         filter(AnswerRequestedFromTable.question_id==question.id).all()
 
-            for request in all_requested:
-                print request.requester_email_id
 
             question.requested = all_requested
 
@@ -276,7 +274,7 @@ def my_questions():
     seen = {}
 
     for q_t in question_topic:
-        print q_t.id
+
         if q_t.id in seen:
 
             print "q_t has topic_name as " + q_t.topic_name
@@ -298,7 +296,7 @@ def my_questions():
 
         else:
             # print "Inside Else block  question is " + q_t.question
-            print "Added first time..."
+            #print "Added first time..."
             compress_question_topic[q_t.id] = q_t
             seen[q_t.id] = q_t.topic_name
 
@@ -655,31 +653,32 @@ def answer(question_id):
 @login_required
 def capture_email():
     from src.model import AnswerRequestedFromTable, db
-    if (request.args.get('question_id') and request.args.get('email_id') and request.args.get('requesting_user_id')):
-        already_asked_from_same_user = AnswerRequestedFromTable.query.filter(AnswerRequestedFromTable.question_id==request.args.get('question_id')).filter(AnswerRequestedFromTable.requester_email_id==request.args.get('email_id')).first()
+    req_obj = request.form
+    if (req_obj['question_id'] and req_obj['email_id'] and req_obj['requesting_user_id']):
+        already_asked_from_same_user = AnswerRequestedFromTable.query.filter(AnswerRequestedFromTable.question_id==req_obj['question_id']).filter(AnswerRequestedFromTable.requester_email_id==req_obj['email_id']).first()
         if(not already_asked_from_same_user is None):
             print "Question was already asked by someone.."
             flash("Question from same user was already asked ")
             return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
 
-        add_request_email_obj = AnswerRequestedFromTable(question_id=request.args.get('question_id'),user_id=request.args.get('requesting_user_id'),
-                                                         requester_email_id=request.args.get('email_id'))
+        add_request_email_obj = AnswerRequestedFromTable(question_id=req_obj['question_id'],user_id=req_obj['requesting_user_id'],
+                                                         requester_email_id=req_obj['email_id'])
 
         db.session.add(add_request_email_obj)
         db.session.commit()
-        flash("Requested " + request.args.get('email_id') + " for help on this question.")
+        flash("Requested " + req_obj['email_id'] + " for help on this question.")
     return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
 
 @knowledge.route('/capture_comment', methods=['GET','POST'])
 @login_required
 def capture_comment():
     from src.model import Comment,db
-    if (request.args.get('comment_text') and request.args.get('answer_id')):
-        add_comment_obj = Comment(answer_id= request.args.get('answer_id') , comment_text = request.args.get('comment_text'),user_id=current_user.id)
+    req_obj = request.form
+    if (req_obj['comment_text'] and req_obj['answer_id']):
+        add_comment_obj = Comment(answer_id= req_obj['answer_id'] , comment_text = req_obj['comment_text'],user_id=current_user.id)
         db.session.add(add_comment_obj)
         db.session.commit()
-        print "Answer id was " + str(request.args.get('answer_id'))
-        print "Comment was " + request.args.get('comment_text')
+
         flash("Success in adding comment")
         return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
     else:
