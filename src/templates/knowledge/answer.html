@@ -10,6 +10,7 @@
 <div class="container" >
 
     <div>
+
         <h6 align="right"><a href='{{ url_for("knowledge.editable_question",question_id=question_text.id)}}' >Rephrase Question</a></h6>
         <h2 align="center"> {{question_text.subject }}</h2>
     </div>
@@ -18,13 +19,16 @@
         <a href='{{ url_for("knowledge.editable_question",question_id=question_text.id)}}' >
             <h6 align="right" style="color: red">Viewed only by you</h6>
         </a>
+        <a href='{{ url_for("knowledge.delete_private_question",question_id=question_text.id)}}' >
+            <h6 align="right" style="color: red">Delete</h6>
+        </a>
     {% endif %}
 
     <h4 align="left"> {{question_text.question | markdown(autolink=True,hard_wrap =True, fenced_code=True, footnotes=True) }}</h4>
 
     <h6 align="right">Viewed: {{question_text.visitors}} times</h6>
     <h6 align="right">Asked By: {{question_text.email}} </h6>
-    <h6 align="right"> {{question_text.date}} </h6>
+    <h6 align="right"> {{moment(question_text.date,local=True).fromNow() }} </h6>
     <h6 align="right" style="color: #0000cc">Topic Selected for question is : {{question_text.topics_for_question }}</h6>
 
 <hr width="90%" size=10 style="color: #0000cc">
@@ -55,7 +59,7 @@
                 <div class="form-group">
                     <textarea class="form-control" id="comment_text{{loop.index}}"></textarea>
                 </div>
-                <button class="btn btn-default" onclick="refreshAnswerComments('{{loop.index}}','{{p_answer.id}}','{{p_answer.question_id}}');return false;">Submit</button>
+                <button class="btn btn-default" onclick="return refreshAnswerComments('{{loop.index}}','{{p_answer.id}}','{{p_answer.question_id}}');">Submit</button>
                 <button class="btn btn-default" onclick="cancelComment('{{loop.index}}'); return false;">Cancel</button>
             </form>
     {% endif %}
@@ -82,12 +86,16 @@
 
     {% if  current_user.is_authenticated() %}
 
+
+
     <!--https://github.com/neo1218/flask-ckeditor/tree/master/examples/app-->
     <div class="container-fluid">
     <form method="POST">
         {{ form.hidden_tag() }}
         <h4>Your Answer:</h4> {{ form.answer_text }}
         {{ form.submit(class="btn btn-default btn-lg btn-primary") }}
+        <a href='{{ url_for("knowledge.cancel")}}' class="btn btn-lg btn-danger" role="button">Cancel</a>
+        <a href='{{ url_for("knowledge.reset")}}' class="btn btn-lg btn-warning" role="button">Reset</a>
     </form>
     </div>
 
@@ -103,21 +111,28 @@
 <script>
     function addComment(answer_index, answer_id) {
         $('#comment'+answer_index).show();
-    }
+    };
     function cancelComment(answer_index){
         $('#comment'+answer_index).hide();
-    }
+    };
     function refreshAnswerComments(loop_index, answer_id, question_id) {
         $.ajax({
                 type: 'GET',
                 url: '/capture_comment?answer_id=' + answer_id + '&comment_text=' + $("#comment_text"+loop_index).val() + '&question_id='+ question_id,
                success : function(data) {
                     //... your other code
-                    //location.reload(); //reload the page on the success
+                    location.reload(); //reload the page on the success
+                    return false;
+                },
+                error: function (data) {
+                    console.log(data);
+                    return false;
                 }
         });
-        $('#comment'+answer_index).hide();
-    }
+
+        //$('#comment'+answer_id).hide();
+        return true;
+    };
 </script>
 
 

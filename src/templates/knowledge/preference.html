@@ -10,8 +10,11 @@
 
 
 <div class="container">
-{{ wtf.quick_form(form) }}
+    <h4>Previously selected topics are: {{ selected_options }}</h4>
+    {{ form.hidden_tag() }}
+    {{ wtf.quick_form(form) }}
 </div>
+
 
 
 {% endblock %}

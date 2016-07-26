@@ -1,15 +1,14 @@
 __author__ = 'pankajg'
 
-from flask.ext.wtf import Form
+from flask_wtf import Form
 
 from flask_wysiwyg.wysiwyg import WysiwygField
-from wtforms import StringField, PasswordField, BooleanField, SubmitField,SelectField, SelectMultipleField, TextAreaField,validators
+from wtforms import StringField, PasswordField, BooleanField, SubmitField,SelectField, SelectMultipleField, TextAreaField,validators, HiddenField
 from wtforms.validators import Required, Length, Email, EqualTo
-from flask.ext.login import login_user, login_required, current_user
-from flaskckeditor import CKEditor
 from wtform_extended_selectfield import ExtendedSelectField
 
-class CKEditorForm(Form, CKEditor):
+
+class CKEditorForm(Form):
     title =  StringField()
     ckdemo = TextAreaField()
     submit = SubmitField('submit')
@@ -21,8 +20,13 @@ class AddTopicForm(Form):
     topic_name=StringField('Topic Name')
     #private = BooleanField('Private', default=False)
     submit = SubmitField('Submit')
+class EditQuestionForm(Form):
+    subject = StringField('Title')
+    question = TextAreaField('Question')
+    private = BooleanField('Private')
+    submit = SubmitField('Submit')
 
-class EnterKnowledge(Form, CKEditor):
+class EnterKnowledge(Form):
     #question = StringField('Question', validators=[Required(), Length(1, 64)], body=WysiwygField(u"texteditor",validators=[Required()])
     #question = WysiwygField("txteditor", validators=[Required()])
     subject = StringField('Title')
@@ -64,12 +68,14 @@ class EnterKnowledge(Form, CKEditor):
                                                  ('Ec','Electric Command'), ('unix','unix'),('unknown','No Topic Set'), ('aws','AWS'),('flask','Python Flask'),('angular','Angular'),
                                                                  ('html','HTML'),('css','CSS'),('js','javascript')])"""
     #https://github.com/industrydive/wtforms_extended_selectfield
-    topic = ExtendedSelectField('Topic',choices=None, render_kw={"multiple":True})
+    topics = ()
+    topic = ExtendedSelectField('Topic',choices=topics, render_kw={"multiple":True})
 
     #topic = StringField('topic',render_kw={'multiple': True, "placeholder": "Categories which applies to above question...."},)
 
     private = BooleanField('Private')
     submit = SubmitField('Submit')
+
 
 class ChangePassword(Form):
     password = PasswordField('New Password', [Required(), EqualTo('confirm', message='Passwords must match')])
@@ -84,17 +90,19 @@ class Login(Form):
 
 class Preference(Form):
     #from ..model import db
+    topics = ()
+    subscription = ExtendedSelectField('Modify Subscription', choices=topics, render_kw={"multiple": True})
+    """
     subscription = SelectField('Modify Subscription',choices=[('Jenkins', 'Jenkins'), ('Perforce', 'Perforce'), ('Git', 'Git'),
                                                  ('Ec','Electric Command'), ('unix','unix'), ('aws','AWS'),('flask','Python Flask'),('angular','Angular'),
                                                                     ('html','HTML'),('css','CSS'),('js','javascript')])
+    """
 
     email_me_for_new_question = BooleanField('Email me for new Questions (only for subscribed topics)')
-
-    email_me_for_updates = BooleanField('Email me on for updates (only for subscribed topics)')
-
+    email_me_for_updates = BooleanField('Email me on for all updates (only for subscribed topics)')
     submit = SubmitField('Submit')
 
-class AnswerForm(Form,CKEditor):
+class AnswerForm(Form):
     answer_text = TextAreaField('answer_text')
     submit = SubmitField('submit')
 

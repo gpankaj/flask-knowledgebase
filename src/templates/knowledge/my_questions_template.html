@@ -34,13 +34,17 @@
 
       <th scope="row">{{ count }}</th>
       <td>{{ my_question.subject  |striptags }}</td>
-      <td>{{my_question.date}}</td>
+      <td>{{moment(my_question.date,local=True).fromNow() }}</td>
       <td>{{my_question.email}}</td>
       <td>{{my_question.topic_name}}</td>
       {% if question_topic[0].visitor %}
         <td>{{my_question.visitor}}</td>
       {% endif %}
-      <td>{{my_question.private}}</td>
+      {% if my_question.private %}
+      <td>In Draft</td>
+      {% else %}
+      <td>Public Viewable</td>
+      {% endif %}
     </tr>
 
 

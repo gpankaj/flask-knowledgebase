@@ -12,6 +12,9 @@ tfoot input {
 
 
 
+
+div#buttons *{display:inline}
+
 #answer{
     width:900px;
     background: transparent;

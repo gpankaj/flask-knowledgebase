@@ -27,7 +27,7 @@
 
   {% if question_topic %}
 
-    {% for my_question in question_topic %}
+    {% for my_question in question_topic|sort(attribute='visitor', reverse=True) %}
 
     <tr onclick="window.location.href='{{ url_for('knowledge.answer',question_id=my_question.id) }}';">
 

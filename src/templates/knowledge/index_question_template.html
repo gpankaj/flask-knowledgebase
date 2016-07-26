@@ -1,0 +1,129 @@
+
+
+
+
+<br><br>
+
+  <table id="example" class="table table-hover table-bordered results table-striped" cellspacing="0" width="100%">
+
+  <thead>
+    <tr>
+      <th>Question</th>
+      <th>Date Asked</th>
+      <th>Asked By</th>
+      <th>Tag(s)</th>
+      <th>Visitors</th>
+
+      <th>Requested Answers from</th>
+    </tr>
+  </thead>
+  <tbody>
+
+
+  {% set count = 1 %}
+
+
+  {% if question_topic %}
+
+    {% for my_question in question_topic|sort(attribute='date', reverse=True) %}
+
+    <tr id="{{my_question.id}}" {% if my_question.answered %} style="background-color: lightgreen" {% endif %} >
+
+      <td onclick="window.location.href='{{ url_for('knowledge.answer',question_id=my_question.id) }}';" title="{{my_question.answered.answer|striptags}}">{{ my_question.subject  |striptags }}</td>
+      <td onclick="window.location.href='{{ url_for('knowledge.answer',question_id=my_question.id) }}';" title="{{my_question.date}}">{{moment(my_question.date,local=True).fromNow() }}</td>
+      <td onclick="window.location.href='{{ url_for('knowledge.answer',question_id=my_question.id) }}';" title="{{my_question.email}}">{{my_question.name}}</td>
+      <td onclick="window.location.href='{{ url_for('knowledge.answer',question_id=my_question.id) }}';">{{my_question.topic_name}}</td>
+      <td onclick="window.location.href='{{ url_for('knowledge.answer',question_id=my_question.id) }}';" {% if my_question.answered %} title="Answer Upvotes: {{my_question.upvotes_on_answer}}" {% endif %} >{{my_question.visitor}}</td>
+
+      {% set requeters=[] %}
+      {% set requeters_email=["Already Requested from :   "] %}
+
+      {% for requeted_email in my_question.requested %}
+          {% if requeters.append(requeted_email.requester_email_id) %}{% endif %}
+          {% if requeters_email.append(requeted_email.requester_email_id) %}{% endif %}
+      {% endfor %}
+
+
+
+
+        {% if current_user.is_authenticated() %}
+          <td {% if requeters %} title="{{requeters_email|join ('  ')}}" {% endif %}>
+        <br>
+          <button onclick="requestAnswer('{{my_question.id}}')">Request Answer</button>
+
+          <form class="form-inline" hidden id="request_question{{my_question.id}}" name="comment">
+                <div class="form-group">
+                    <input required   placeholder="Email id - whom to request" type="email" class="form-control" id="email{{my_question.id}}"/>
+                </div>
+                <button class="btn btn-default" onclick="return refreshAnswerComments('{{my_question.id}}','{{current_user.id}}','{{requeters|join(' ')}}');">Submit</button>
+                <button class="btn btn-default" onclick="cancelComment('{{my_question.id}}'); return false;">Cancel</button>
+          </form>
+        {% else %}
+        <td><label>{% if requeters %} {{requeters_email|join (' &#xA; ') | safe}} {% endif %}</label>
+        {% endif %}
+      </td>
+
+
+    </tr>
+
+
+
+    {% set count = count + 1 %}
+    {% endfor %}
+  {% endif %}
+  </tbody>
+</table>
+  **Question in green are answered
+
+  <script>
+    function requestAnswer(question_id) {
+        $('#request_question'+question_id).show();
+    };
+
+    function cancelComment(question_id) {
+        $('#request_question'+question_id).hide();
+    };
+
+    function refreshAnswerComments(question_id,requesting_user_id,list_of_emails){
+
+
+      if (/^\w+([\.-]?\w+)*@(broadcom.com)$/.test(document.getElementById('email'+question_id).value))
+      {
+
+      }
+      else
+      {
+
+        $('#email'+question_id).focus();
+        alert("You have entered an invalid email address!");
+        return false;
+      };
+
+      emails = list_of_emails.split(" ");
+      email_in_field = $("#email"+question_id).val();
+      console.log(email_in_field);
+      console.log(emails);
+      if (emails.indexOf(email_in_field) > -1) {
+        $('#email'+question_id).focus();
+        console.log("Answer from this question was already asked from " + $("#email"+question_id).val());
+        alert("Answer from this question was already asked from " + $("#email"+question_id).val());
+        return false;
+      }
+
+
+      $.ajax({
+                type: 'GET',
+                url: '/capture_email?question_id=' + question_id + '&email_id=' + $("#email"+question_id).val() + '&requesting_user_id='+ requesting_user_id,
+                success : function(data) {
+                    window.location.reload();
+                },
+                error: function (data) {
+                  console.log("Error message " + data)
+
+                }
+        });
+      $('#request_question'+question_id).hide();
+      return true;
+    };
+
+  </script>

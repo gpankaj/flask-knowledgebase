@@ -4,12 +4,33 @@ __author__ = 'pankajg'
 from sqlalchemy import Table,Column, DateTime, String, Integer, ForeignKey, func
 from sqlalchemy.orm import relationship, backref
 from werkzeug.security import generate_password_hash, check_password_hash
-#from . import db
-from flask.ext.login import UserMixin
+from flask_login import UserMixin
 from src import login_manager
-from manage import db
+from . import db
 
 
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+    #return User.query.filter_by(id=user_id).first()
+
+
+from requests_oauthlib import OAuth2Session
+
+def get_google_auth(state=None, token=None):
+    from config import Auth
+    if token:
+        return OAuth2Session(Auth.CLIENT_ID, token=token)
+    if state:
+        return OAuth2Session(
+            Auth.CLIENT_ID,
+            state=state,
+            redirect_uri=Auth.REDIRECT_URI)
+    oauth = OAuth2Session(
+        Auth.CLIENT_ID,
+        redirect_uri=Auth.REDIRECT_URI,
+        scope=Auth.SCOPE)
+    return oauth
 
 class Question(db.Model):
     __tablename__= 'questions'
@@ -17,6 +38,8 @@ class Question(db.Model):
     subject = db.Column(db.String(256),nullable=False)
 
     private = db.Column(db.Boolean,default=False)
+
+    visible = db.Column(db.Boolean, default=True)
 
     question = db.Column(db.UnicodeText, nullable=False)
     #question_answers = relationship("Answer")
@@ -75,7 +98,7 @@ class Topic(db.Model):
     topic_name = db.Column(db.String(32), nullable=False)
     question_id = db.Column(db.Integer,ForeignKey('questions.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    #user_uid = db.Column(db.String(20))
+
 
 class AllTopic(db.Model):
     __tablename__='alltopics'
@@ -123,39 +146,21 @@ class User(UserMixin,db.Model):
     tokens = db.Column(db.Text)
     created_at = db.Column(DateTime, default=func.now())
 
-    #uid = db.Column(db.String(20), unique=True)
     is_admin = db.Column(db.Boolean)
-    #password_hash = db.Column(db.String(128))
+
     email_me_for_new_question = db.Column(db.Boolean)
     email_me_for_updates = db.Column(db.Boolean)
-
-    #topics = db.Column(db.String(512))
-    #One user can subscribe to multiple topics
-    #user_topics = relationship("Topic")
 
     questions = db.relationship('Question', backref='author', lazy='dynamic')
     answers = db.relationship('Answer', backref='author', lazy='dynamic')
     topics = db.relationship('Topic', backref='author', lazy='dynamic')
     comments = db.relationship('Comment', backref = 'author', lazy='dynamic')
 
-@login_manager.user_loader
-def load_user(user_id):
-    return User.query.get(int(user_id))
 
-
-from requests_oauthlib import OAuth2Session
-
-def get_google_auth(state=None, token=None):
-    from config import Auth
-    if token:
-        return OAuth2Session(Auth.CLIENT_ID, token=token)
-    if state:
-        return OAuth2Session(
-            Auth.CLIENT_ID,
-            state=state,
-            redirect_uri=Auth.REDIRECT_URI)
-    oauth = OAuth2Session(
-        Auth.CLIENT_ID,
-        redirect_uri=Auth.REDIRECT_URI,
-        scope=Auth.SCOPE)
-    return oauth
+class AnswerRequestedFromTable(db.Model):
+    __tablename__='requested_answers'
+    id = db.Column(db.Integer, primary_key=True)
+    question_id = db.Column(db.Integer, ForeignKey('questions.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    requester_email_id = db.Column(db.String(100), nullable=False)
+    date = db.Column(DateTime, default=func.now())

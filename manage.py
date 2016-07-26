@@ -2,15 +2,11 @@ __author__ = 'pankajg'
 import os
 #from src import db
 from src import create_app
-from flask.ext.script import Manager
-
-from flask.ext.admin import Admin
+from flask_script import Manager
 
 
-from flask.ext.sqlalchemy import SQLAlchemy
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
-db = SQLAlchemy(app, use_native_unicode=True)
-db.create_all()
+manager = Manager(app)
 
 
 def setup_db():
@@ -44,8 +40,8 @@ def nl2br(eval_ctx, value):
     return result
 
 
-admin = Admin(app)
-manager = Manager(app)
+#admin = Admin(app)
+
 
 
 
@@ -74,3 +70,6 @@ def adduser(uid, admin=False):
 
 if __name__ == '__main__':
     manager.run()
+
+
+from src.model import db

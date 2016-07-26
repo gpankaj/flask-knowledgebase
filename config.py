@@ -7,6 +7,7 @@ class Auth:
 
     CLIENT_ID = ('563959952938-r23rkq28rs5mm3netmk9di3ne8kpr3f8.apps.googleusercontent.com')
     CLIENT_SECRET = 'KLn0sUmsXUkEfviIUsabmaAr'
+    #REDIRECT_URI = 'http://lc-blr-292.ban.broadcom.com/gCallback'
     REDIRECT_URI = 'http://localhost:5000/gCallback'
     AUTH_URI = 'https://accounts.google.com/o/oauth2/auth'
     TOKEN_URI = 'https://accounts.google.com/o/oauth2/token'
@@ -16,9 +17,11 @@ class Auth:
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY')
     WTF_CSRF_CHECK_DEFAULT =False
+    SQLALCHEMY_TRACK_MODIFICATIONS=False
+    DEBUG = False
 
 class DevelopmentConfig(Config):
-    DEBUG=True
+    DEBUG=False
     SECRET_KEY = os.environ.get('SECRET_KEY') or 't0p s3r3t'
 
 

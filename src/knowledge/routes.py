@@ -1,24 +1,39 @@
 
 from . import knowledge
-from flask import render_template, url_for, flash, redirect, request, abort, g, session
-from form import EnterKnowledge, AnswerForm,AddTopicForm
-from form import Preference, CKEditorForm
-from form import Login
-from var_dump import var_dump
-from flask.ext.login import login_user, login_required, current_user, logout_user
+from flask import render_template, url_for, flash, redirect, request,session,abort,jsonify
+from form import EnterKnowledge, AnswerForm,AddTopicForm,EditQuestionForm
+from flask_login import login_user, login_required, current_user, logout_user
 
-"""
-from werkzeug import secure_filename
-@knowledge.route('/ckupload/', methods=['POST', 'OPTIONS'])
-def ckupload():
-    #file/img upload interface
-    print "Trying to upload file..."
-    if request.method == 'POST':
-        print "Trying to upload file inside POST method"
-        f = request.files['file']
-        f.save(secure_filename(f.filename))
-        return 'file uploaded successfully'
-"""
+def populate_topics():
+    from src.model import AllTopic
+
+    all_topics_with_categories = AllTopic.query.filter_by().all()
+    category_dict = {}
+    list_of_tuples=[]
+
+    for all_topics_with_categorie in all_topics_with_categories:
+        if all_topics_with_categorie.topic_category == '_AddNew_' or all_topics_with_categorie.topic_category == '_AddNew_':
+            print "Skipping adding _Add New_"
+            continue
+
+        if all_topics_with_categorie.topic_category in category_dict:
+            list_of_tuples = category_dict[all_topics_with_categorie.topic_category]
+            list_of_tuples.append((all_topics_with_categorie.topic_name, all_topics_with_categorie.topic_name))
+            category_dict[all_topics_with_categorie.topic_category] = list_of_tuples
+        else:
+            list_of_tuples.append((all_topics_with_categorie.topic_name,all_topics_with_categorie.topic_name))
+            category_dict[all_topics_with_categorie.topic_category] = list_of_tuples
+
+        # we need to remove previous items from list.
+        list_of_tuples=[]
+
+    # Below converts list to tuples in dict value.
+    for k,v in category_dict.items():
+        category_dict[k] = tuple(v)
+
+    topic_group = tuple(category_dict.iteritems())
+
+    return topic_group
 ########################################################################################################
 
 
@@ -71,16 +86,31 @@ def ckupload():
 #
 #################################################
 
-def get_all_questions():
-    from src.model import Question, Topic,User
-    question_topic = Question.query.join(Topic).join(User,User.id==Question.user_id).add_columns(User.email,Question.subject, Question.private,Question.question, Question.date, Topic.topic_name, Question.id, Topic.question_id)\
-        .filter(Question.id == Topic.question_id).filter(Question.private==0).all()
+def get_all_questions(my_only=False):
+    from src.model import Question, Topic,User,Visitor
+    question_topic = None
+
+    if my_only:
+        question_topic = Question.query.join(Topic).join(User,User.id==Question.user_id).add_columns(User.email,User.name,Question.subject, Question.private,Question.question, Question.date, Topic.topic_name, Question.id, Topic.question_id)\
+            .filter(Question.user_id == current_user.id).filter(Question.id == Topic.question_id).filter(Question.private==0).all()
+    else:
+        question_topic = Question.query.join(Topic).join(User, User.id == Question.user_id).add_columns(User.email,
+                                                                                                        User.name,
+                                                                                                        Question.subject,
+                                                                                                        Question.private,
+                                                                                                        Question.question,
+                                                                                                        Question.date,
+                                                                                                        Topic.topic_name,
+                                                                                                        Question.id,
+                                                                                                        Topic.question_id) \
+            .filter(Question.id == Topic.question_id).filter(Question.private == 0).all()
+
 
     new_question_topic = [r for r in question_topic]
     #print len(question_topic)
     # If there is no question existing in system, redirect user to ask a question
     if(not question_topic):
-        flash('Currently there is no question in database, ask a question')
+        flash('Currently there is no question asked by you, ask a question. Redirecting to index page')
         return redirect(url_for('knowledge.question'))
 
     for q in question_topic:
@@ -99,8 +129,9 @@ def get_all_questions():
             print "Seen has values as  " + seen[q_t.id]
             print "question id is " + str(q_t.id)
 
+            seen[q_t.id] = str(seen[q_t.id]) + ", " + q_t.topic_name
 
-            q_t.topic_name = q_t.topic_name + str(seen[q_t.id])
+            q_t.topic_name = str(seen[q_t.id])
 
             #setattr(q_t, 'topic_name', q_t.topic_name + str(seen[q_t.id]))
 
@@ -112,10 +143,18 @@ def get_all_questions():
 
         else:
             #print "Inside Else block  question is " + q_t.question
+            print "Added first time..."
             compress_question_topic[q_t.id] = q_t
-            seen[q_t.id] = " ,  " + q_t.topic_name
+            seen[q_t.id] = q_t.topic_name
     #print len(compress_question_topic)
-    return compress_question_topic
+
+    question_with_visitor=[]
+    for question in compress_question_topic.values():
+        all_visitors = Visitor.query.filter(Visitor.question_id == question.id).count()
+        question.visitor = all_visitors
+        question_with_visitor.append(question)
+
+    return question_with_visitor
 
 
 
@@ -154,28 +193,55 @@ def help():
 #################################################
 
 @knowledge.route('/')
+@knowledge.route('/index')
 def index():
-    from src.model import get_google_auth, Visitor
+    from src.model import get_google_auth, Visitor,Answer,Upvote,AnswerRequestedFromTable,User
     from config import Auth
 
-
-    question_with_visitor=[]
-    questions_in_db = get_all_questions()
-    if (bool(questions_in_db) and isinstance(questions_in_db, dict)):
-        for question in questions_in_db.values():
-            all_visitors = Visitor.query.filter(Visitor.question_id==question.id).count()
-            question.visitor = all_visitors
-            question_with_visitor.append(question)
-
-
-    if current_user.is_authenticated():
-        return render_template('knowledge/index.html', question_topic=question_with_visitor)
-
-    print("Message from index - you are unauthorized, builgin URL to use for login")
     google = get_google_auth()
     auth_url, state = google.authorization_url(
         Auth.AUTH_URI, access_type='offline')
     session['oauth_state'] = state
+
+    question_with_visitor=[]
+    all_question = get_all_questions()
+    if (isinstance(all_question, list)):
+        for question in get_all_questions():
+            #Answer.query.filter(Answer.question_id==question.id).
+            """
+            question_topic = Question.query.join(Topic).join(User,User.id==Question.user_id).add_columns(User.email,Question.subject, Question.private,Question.question, Question.date, Topic.topic_name, Question.id, Topic.question_id)\
+            .filter(Question.id == Topic.question_id).filter(Question.private==0).all()
+
+            """
+            upvotes_on_answer = Answer.query.join(Upvote).add_columns(Answer.id,Answer.answer,Upvote.answer_id).filter(Answer.question_id==question.id).filter(Answer.id==Upvote.answer_id).count()
+            answered = Answer.query.filter(Answer.question_id == question.id).order_by(Answer.date.desc()).first()
+
+            all_requested = AnswerRequestedFromTable.query.join(User).add_columns(User.id, User.name, User.email,
+                                                                                  AnswerRequestedFromTable.question_id,
+                                                                                  AnswerRequestedFromTable.user_id,
+                                                                                  AnswerRequestedFromTable.date,
+                                                                                  AnswerRequestedFromTable.requester_email_id). \
+                                                                                        filter(AnswerRequestedFromTable.question_id==question.id).all()
+
+            for request in all_requested:
+                print request.requester_email_id
+
+            question.requested = all_requested
+
+            question.upvotes_on_answer = upvotes_on_answer
+            question.answered = answered
+
+            question_with_visitor.append(question)
+    else:
+        return render_template('knowledge/index.html', auth_url=auth_url, question_topic=question_with_visitor)
+
+    #from operator import  attrgetter
+    #sorted_question_with_visitors = sorted(question_with_visitor, key=attrgetter('all_visitors'), reverse=True)
+    if current_user.is_authenticated():
+        #find his preferences
+        return render_template('knowledge/index.html', question_topic=question_with_visitor)
+
+    print("Message from index - you are unauthorized, builgin URL to use for login")
 
     return render_template('knowledge/index.html', auth_url=auth_url, question_topic=question_with_visitor)
 
@@ -196,27 +262,47 @@ def index():
 def my_questions():
     from src.model import Topic, Question,User
 
-    question_topic = Question.query.join(Topic).join(User,User.id==Question.user_id).add_columns(User.email,Question.subject, Question.private, Question.question, Question.date, Topic.topic_name, Question.user_id, Question.id, Topic.question_id)\
-        .filter(Question.user_id == current_user.id)\
+    question_topic = Question.query.join(Topic).join(User,User.id==Question.user_id).add_columns(User.email,Question.subject, Question.private, Question.visible, Question.question, Question.date, Topic.topic_name, Question.user_id, Question.id, Topic.question_id)\
+        .filter(Question.user_id == current_user.id).filter(Question.private==1).filter(Question.visible==1)\
         .filter(Question.id == Topic.question_id).all()
 
     # If there is no question existing in system, redirect user to ask a question
     if(not question_topic):
-        flash('Currently there is no question asked by you, do you want to ask a question')
-        return redirect(url_for('knowledge.question'))
+        flash('Currently there is no questions in draft')
+        return redirect(url_for('knowledge.all_questions'))
 
     #Below logic is to create a set of topic, with same question there can be more than one tag and multiple entry for that in Topics table.
     compress_question_topic = {}
     seen = {}
+
     for q_t in question_topic:
+        print q_t.id
         if q_t.id in seen:
-            q_t.topic_name += seen[q_t.id]
-            print "Topic Name " + q_t.topic_name
+
+            print "q_t has topic_name as " + q_t.topic_name
+            print "Seen has values as  " + seen[q_t.id]
+            print "question id is " + str(q_t.id)
+
+
+            seen[q_t.id] = str(seen[q_t.id]) + ", " + q_t.topic_name
+
+            q_t.topic_name = str(seen[q_t.id])
+
+            # setattr(q_t, 'topic_name', q_t.topic_name + str(seen[q_t.id]))
+
+            print "New topic name is " + q_t.topic_name
+            # print "Topic name " + q_t.new_topic_name
+
             compress_question_topic[q_t.id] = q_t
-            seen[q_t.id] = " ,  " + q_t.topic_name
+            # print "Reading question is " + q_t.question
+
         else:
+            # print "Inside Else block  question is " + q_t.question
+            print "Added first time..."
             compress_question_topic[q_t.id] = q_t
-            seen[q_t.id] = " ,  " + q_t.topic_name
+            seen[q_t.id] = q_t.topic_name
+
+
     return render_template('knowledge/my_questions.html', question_topic=compress_question_topic.values())
 
 #################################################
@@ -230,9 +316,10 @@ def my_questions():
 
 
 @knowledge.route('/allquestions')
+@login_required
 def all_questions():
     #################################################################################
-    from src.model import get_google_auth, Visitor, Question
+    from src.model import get_google_auth, Answer, Upvote
     from config import Auth
 
     google = get_google_auth()
@@ -240,9 +327,26 @@ def all_questions():
         Auth.AUTH_URI, access_type='offline')
     session['oauth_state'] = state
 #################################################################################
-    question_in_db = get_all_questions()
-    if (bool(question_in_db) and isinstance(question_in_db, dict)):
-        return render_template('knowledge/allquestions.html', question_topic=question_in_db.values(),auth_url=auth_url)
+
+    question_with_visitor = []
+
+    all_question = get_all_questions(my_only=True)
+    if (isinstance(all_question, list)):
+        for question in all_question:
+
+            upvotes_on_answer = Answer.query.join(Upvote).add_columns(Answer.id, Upvote.answer_id).filter(
+                Answer.question_id == question.id).filter(Answer.id == Upvote.answer_id).count()
+            answered = Answer.query.filter(Answer.question_id == question.id).order_by(Answer.date.desc()).first()
+
+            question.upvotes_on_answer = upvotes_on_answer
+            question.answered = answered
+
+            question_with_visitor.append(question)
+    else:
+        return redirect(url_for('knowledge.index'))
+
+    if (bool(question_with_visitor)):
+        return render_template('knowledge/allquestions.html', question_topic=question_with_visitor,auth_url=auth_url)
     else:
         return render_template('knowledge/index.html', auth_url=auth_url, question_topic=[])
 
@@ -258,42 +362,13 @@ def all_questions():
 #################################################
 
 
+
 @knowledge.route('/question/', methods = ['GET', 'POST'])
 @login_required
 def question():
     form = EnterKnowledge()
-    from src.model import Topic, db, Question,AllTopic
 
-    all_topics_with_categories = AllTopic.query.filter_by().all()
-    category_dict = {}
-    mid_array=[]
-    list_of_tuples=[]
-    topic_group = None
-
-    for all_topics_with_categorie in all_topics_with_categories:
-        if all_topics_with_categorie.topic_category == '_Add New_' or all_topics_with_categorie.topic_category == '_Add_New_':
-            print "Skipping adding _Add New_"
-            continue
-
-        if all_topics_with_categorie.topic_category in category_dict:
-            list_of_tuples = category_dict[all_topics_with_categorie.topic_category]
-            list_of_tuples.append((all_topics_with_categorie.topic_name, all_topics_with_categorie.topic_name))
-            category_dict[all_topics_with_categorie.topic_category] = list_of_tuples
-        else:
-            list_of_tuples.append((all_topics_with_categorie.topic_name,all_topics_with_categorie.topic_name))
-            category_dict[all_topics_with_categorie.topic_category] = list_of_tuples
-
-        # we need to remove previous items from list.
-        list_of_tuples=[]
-
-    # Below convert list to tuples in dict value.
-    for k,v in category_dict.items():
-        category_dict[k] = tuple(v)
-
-    topic_group = tuple(category_dict.iteritems())
-
-    print topic_group
-    form.topic.choices=topic_group
+    form.topic.choices = populate_topics()
 
     if form.validate_on_submit():
         from src.model import Topic, db, Question
@@ -335,7 +410,11 @@ def question():
 
 @knowledge.route('/add_topic',methods=['GET','POST'])
 @login_required
-def AddTopic():
+def add_topic():
+    if (not current_user.id):
+        flash("Please logout and login again")
+        return redirect(url_for('knowledge.index'))
+
     form = AddTopicForm()
     from src.model import AllTopic, db
     all_categories_and_topics = AllTopic.query.filter_by().all()
@@ -348,7 +427,7 @@ def AddTopic():
             if(form.new_category.data):
                 new_topic = AllTopic(topic_category=form.new_category.data,topic_name=form.topic_name.data, user_id=current_user.id)
             elif(form.old_category.data):
-                print "Old category is " + form.old_category.data
+                print "Old category after validation is " + form.old_category.data
                 new_topic = AllTopic(topic_category=form.old_category.data,topic_name=form.topic_name.data, user_id=current_user.id)
             else:
                 flash('Error')
@@ -361,7 +440,7 @@ def AddTopic():
 
         except Exception as e:
             flash('Faiiled to add category... please retry ' + str(e.message))
-            return redirect(url_for('knowledge.AddTopic'))
+            return redirect(url_for('knowledge.add_topic'))
     else:
         print "Old category is " + str(form.old_category.data)
         print "Form not validated"
@@ -378,14 +457,14 @@ def question_autocomplete():
 
     from src.model import Question
     from flask import jsonify
-    results = Question.query.with_entities(Question.subject, Question.id,Question.private,Question.user_id).filter(Question.subject.ilike('%'+search+'%')).all()
+    results = Question.query.with_entities(Question.subject, Question.id,Question.private,Question.visible,Question.user_id).filter(Question.subject.ilike('%'+search+'%')).all()
     final_result=[]
     for result in results:
         t = (result.id,result.subject)
         #take out private question which are not owned by same owner
-        if(result.private==1 and result.user_id == current_user.id):
+        if(result.private==1 and result.user_id == current_user.id and result.visible==1):
             final_result.append(t)
-        elif(result.private==0):
+        elif(result.private==0 and result.visible==1):
             final_result.append(t)
         else:
             print "We are excluding question " + str(result.id)
@@ -408,19 +487,19 @@ def editable_question(question_id):
     if(current_user.id != previous_question.user_id):
         flash("You can not modify this question")
         return redirect(url_for('knowledge.answer', question_id=previous_question.id))
+    if (previous_question.visible == 0):
+        flash("You can modify a deleted question")
+        return redirect(url_for('knowledge.my_questions'))
+
     print "Rephrasing " + str(question_id)
 
-    form = EnterKnowledge()
+    form = EditQuestionForm()
     form.question.data = previous_question.question
     form.subject.data = previous_question.subject
     if(previous_question.private):
         form.private.data = 1
     else:
         form.private.data = 0
-
-    for topic in previous_question.topics:
-        print "Topics of previous question was " + topic.topic_name
-        form.topic.data.append(topic.topic_name)
 
     #form.topic.data=topics
 
@@ -429,8 +508,6 @@ def editable_question(question_id):
     #form.answer.data = answer[:-6]
 
     if form.validate_on_submit():
-
-
         print "New data is " + request.form['question']
 
         Question.query.filter_by(id=question_id).update(dict(question=request.form['question']))
@@ -448,6 +525,17 @@ def editable_question(question_id):
         return redirect(url_for('knowledge.answer', question_id=previous_question.id))
     return render_template('knowledge/edit_question_form.html',form=form)
 
+@knowledge.route('/question/delete/<int:question_id>', methods = ['GET', 'POST'])
+@login_required
+def delete_private_question(question_id):
+    from src.model import db,Question
+    Question.query.filter_by(id=question_id).update(dict(visible=0))
+    db.session.commit()
+    flash("Deleted your question " + str(question_id))
+    return redirect(url_for('knowledge.my_questions'))
+
+
+
 #################################################
 #
 #
@@ -456,13 +544,24 @@ def editable_question(question_id):
 #
 #
 #################################################
+
+@knowledge.route('/reset')
+def reset(default='index'):
+    redirect_to = request.args.get('next') or request.referrer or default
+    return redirect (redirect_to)
+
+
+@knowledge.route('/cancel')
+def cancel(default='index'):
+    redirect_to = request.args.get('next') or request.referrer or default
+    return redirect (url_for('knowledge.index'))
 
 
 @knowledge.route('/question/<int:question_id>', methods = ['GET', 'POST'])
 def answer(question_id):
     from src.model import db,Question,Answer,User, Upvote,Topic
 
-    question_text = Question.query.join(User).add_columns(Question.question, User.email, User.id, Question.subject, Question.private, Question.user_id, Question.id, Question.date, Question.topics).filter(Question.id==question_id).first()
+    question_text = Question.query.join(User).add_columns(Question.question, User.email, User.id, Question.subject, Question.private, Question.visible, Question.user_id, Question.id, Question.date, Question.topics).filter(Question.visible==1).filter(Question.id==question_id).first()
     if (not question_text):
         flash( str(question_id) + 'This question does not exist. Redirecting to index page')
         return redirect(url_for('knowledge.index'))
@@ -497,8 +596,13 @@ def answer(question_id):
     # Add visitor data to question_text object
     question_text.visitors = all_visitors
 
-    topics_for_question = Topic.query.filter_by(question_id=question_text.id).first()
-    question_text.topics_for_question = topics_for_question.topic_name
+    topics_for_question = Topic.query.filter_by(question_id=question_text.id).all()
+    question_text.topics_for_question = ""
+    for topic in topics_for_question:
+        if question_text.topics_for_question != "" :
+            question_text.topics_for_question = topic.topic_name  + " ," + question_text.topics_for_question
+        else:
+            question_text.topics_for_question = topic.topic_name
 
     #UserImage.query.filter(UserImage.user_id == 1).count()
     previous_answers_with_upvote = []
@@ -546,9 +650,27 @@ def answer(question_id):
 
     return render_template('knowledge/answer.html', question_text = question_text, previous_answers = previous_answers_with_upvote, form=form, auth_url=auth_url)
 
+#'/capture_email?question_id=' + question_id + '&email_id=' + $("#email"+question_id).val() + '&requesting_user_id='+ requesting_user_id,
+@knowledge.route('/capture_email', methods=['GET','POST'])
+@login_required
+def capture_email():
+    from src.model import AnswerRequestedFromTable, db
+    if (request.args.get('question_id') and request.args.get('email_id') and request.args.get('requesting_user_id')):
+        already_asked_from_same_user = AnswerRequestedFromTable.query.filter(AnswerRequestedFromTable.question_id==request.args.get('question_id')).filter(AnswerRequestedFromTable.requester_email_id==request.args.get('email_id')).first()
+        if(not already_asked_from_same_user is None):
+            print "Question was already asked by someone.."
+            flash("Question from same user was already asked ")
+            return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
 
+        add_request_email_obj = AnswerRequestedFromTable(question_id=request.args.get('question_id'),user_id=request.args.get('requesting_user_id'),
+                                                         requester_email_id=request.args.get('email_id'))
 
-@knowledge.route('/capture_comment', methods=['GET'])
+        db.session.add(add_request_email_obj)
+        db.session.commit()
+        flash("Requested " + request.args.get('email_id') + " for help on this question.")
+    return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
+
+@knowledge.route('/capture_comment', methods=['GET','POST'])
 @login_required
 def capture_comment():
     from src.model import Comment,db
@@ -559,12 +681,103 @@ def capture_comment():
         print "Answer id was " + str(request.args.get('answer_id'))
         print "Comment was " + request.args.get('comment_text')
         flash("Success in adding comment")
+        return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
     else:
         flash("Some problem...")
-    from flask import jsonify
-    return redirect(url_for('knowledge.answer',question_id=request.args.get('question_id')))
-    #return jsonify({'result': 'success'})
+    return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
 
+"""
+    from flask import jsonify
+    #return redirect(url_for('knowledge.answer',question_id=request.args.get('question_id')))
+    #return jsonify({'result': 'success'})
+    from src.model import db, Question, Answer, User, Upvote, Topic
+    question_id = request.args.get('question_id')
+    question_text = Question.query.join(User).add_columns(Question.question, User.email, User.id, Question.subject,
+                                                          Question.private, Question.user_id, Question.id,
+                                                          Question.date, Question.topics).filter(
+        Question.id == question_id).first()
+    if (not question_text):
+        flash(str(question_id) + ' This question does not exist. Redirecting to index page')
+        return redirect(url_for('knowledge.index'))
+    if (current_user.is_authenticated()):
+        if (question_text.private == 1 and question_text.email != current_user.email):
+            flash("You do not own this private question with ID : " + str(question_text.id))
+            return redirect(url_for('knowledge.index'))
+
+    #################################################################################
+    from src.model import get_google_auth, Visitor, Comment
+    from config import Auth
+
+    google = get_google_auth()
+    auth_url, state = google.authorization_url(
+        Auth.AUTH_URI, access_type='offline')
+    session['oauth_state'] = state
+    #################################################################################
+
+    # update visitor count for question if logged in
+    if (current_user.is_authenticated()):
+        visitor = Visitor.query.filter(Visitor.question_id == question_id).filter(
+            Visitor.user_name == current_user.email).first()
+        if visitor is not None:
+            visitor.user_name = current_user.email
+            db.session.commit()
+
+    previous_answers = Answer.query.join(User).add_columns(Answer.answer, Answer.date, Answer.user_id,
+                                                           Answer.question_id, User.email, User.id, Answer.id) \
+        .filter(Answer.question_id == question_id).filter(Answer.user_id == User.id).order_by(Answer.date.desc()).all()
+
+    all_visitors = Visitor.query.filter(Visitor.question_id == question_id).count()
+    # Add visitor data to question_text object
+    question_text.visitors = all_visitors
+
+    topics_for_question = Topic.query.filter_by(question_id=question_text.id).first()
+    question_text.topics_for_question = topics_for_question.topic_name
+
+    # UserImage.query.filter(UserImage.user_id == 1).count()
+    previous_answers_with_upvote = []
+
+    for previous_answer in previous_answers:
+        upvoted_answer = Upvote.query.filter_by(answer_id=previous_answer.id).count()
+        print "upvoted_answer" + str(upvoted_answer)
+        previous_answer.upvote = upvoted_answer
+
+        comments_of_answer = Comment.query.filter_by(answer_id=previous_answer.id).all()
+        previous_answer.comments = comments_of_answer
+
+        previous_answers_with_upvote.append(previous_answer)
+
+    if not current_user.is_authenticated():
+        flash('View only mode, login to modify')
+
+    form = AnswerForm()
+    if current_user.is_authenticated():
+
+        already_visited = Visitor.query.filter(Visitor.question_id == question_id).filter(
+            Visitor.user_name == current_user.email).first()
+        if (already_visited is None):
+            new_visitor = Visitor(question_id=question_id, user_name=current_user.email)
+            db.session.add(new_visitor)
+            db.session.commit()
+
+        if form.validate_on_submit():
+            import re
+            if (re.match('', form.answer_text.data)):
+                if (re.match('[^\s]', form.answer_text.data)):
+                    answer_obj = Answer(answer=form.answer_text.data, question_id=question_id, user_id=current_user.id)
+                    db.session.add(answer_obj)
+                    db.session.commit()
+                    # return render_template('knowledge/answer.html',question_text = question_text, previous_answers = previous_answers, form=form)
+                    return redirect(url_for('knowledge.answer', question_id=question_id))
+                else:
+                    flash('Can not submit an empty answer')
+            else:
+                flash('Can not submit an empty answer')
+                # print "Capturing and showing answers for question id " + str(question_id)
+
+    return render_template('knowledge/answer.html', question_text=question_text,
+                           previous_answers=previous_answers_with_upvote, form=form, auth_url=auth_url)
+
+"""
 
 
 #################################################
@@ -654,6 +867,10 @@ def logout():
     return redirect(url_for('knowledge.index'))
 
 
+#################################################
+
+
+
 
 #################################################
 #
@@ -669,11 +886,22 @@ def logout():
 @knowledge.route('/preference', methods = ['GET', 'POST'])
 @login_required
 def preference():
+    from form import Preference
     form = Preference()
+    form.subscription.choices = populate_topics()
+
+
     from src.model import Topic, db, User
     #from .. import db
     #current_prefernces = Topic.query.with_entities(Topic.topic_name).filter_by(user_id=current_user.id).all()
     current_prefernces = Topic.query.filter_by(user_id=current_user.id).all()
+
+    selected_options = []
+    for c in current_prefernces:
+        # topics.append(c.topic_name)
+        print "user had " + c.topic_name
+        selected_options.append(c.topic_name)
+    #form.subscription.data=selected_options
 
 
     if form.validate_on_submit():
@@ -685,18 +913,16 @@ def preference():
 
         Topic.query.filter_by(user_id=current_user.id).delete()
 
-        for topic in form.subscription.data:
-            topic_obj = Topic(topic_name = topic, user_id=current_user.id)
+        print "request.values + " + str(request.values)
+
+        for item in request.form.getlist('subscription'):
+            topic_obj = Topic(user_id=current_user.id, topic_name=item)
+            print "Subscription is set to " + item
             db.session.add(topic_obj)
             db.session.commit()
+
         flash ('Successfully updated your preferences')
         return redirect(url_for('knowledge.all_questions'))
-
-    topics=[]
-    for c in current_prefernces:
-        topics.append(c.topic_name)
-
-    form.subscription.data=topics
 
     user_preferences = User.query.filter_by(id=current_user.id).first()
     form.email_me_for_new_question.data = user_preferences.email_me_for_new_question
@@ -704,7 +930,7 @@ def preference():
     print "Current preferences email_me_for_new_question " + str(form.email_me_for_new_question.data)
     print "Current preferences email_me_for_updates " + str(form.email_me_for_updates.data)
 
-    return render_template('knowledge/preference.html', form = form)
+    return render_template('knowledge/preference.html', form = form,selected_options=selected_options)
 
 
 
@@ -831,5 +1057,5 @@ def callback():
                 flash("Successfully logged in, have a check on your preferences")
                 return redirect(url_for('knowledge.preference'))
             else:
-                return redirect(url_for('knowledge.preference'))
+                return redirect(url_for('knowledge.index'))
         return 'Could not fetch your information.'
