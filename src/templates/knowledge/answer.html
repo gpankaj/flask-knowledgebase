@@ -44,7 +44,7 @@
 
     <h6 align="right"><a href='{{ url_for("knowledge.editable_answer",answer_id=p_answer.id)}}' >Rephrase Answer</a></h6>
     <h4 id="answer" align="left">
-      {{ p_answer.answer |markdown(autolink=True ,hard_wrap =True, fenced_code=True, footnotes=True)}}
+      {{ p_answer.answer |markdown( hard_wrap =True, fenced_code=True, footnotes=True)}}
     </h4>
 
 
@@ -105,7 +105,7 @@
     {% endif %}
 
 </div>
-
+<meta name="csrf-token" content="{{ csrf_token() }}">
 
 
 <script>
@@ -115,7 +115,16 @@
     function cancelComment(answer_index){
         $('#comment'+answer_index).hide();
     };
+
     function refreshAnswerComments(loop_index, answer_id, question_id) {
+        var csrftoken = $('meta[name=csrf-token]').attr('content');
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken)
+                }
+            }
+        });
         $.ajax({
                 type: 'POST',
                 data: { format: 'json'},
