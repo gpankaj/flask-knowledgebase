@@ -3,6 +3,7 @@ from . import knowledge
 from flask import render_template, url_for, flash, redirect, request,session,abort,jsonify
 from form import EnterKnowledge, AnswerForm,AddTopicForm,EditQuestionForm
 from flask_login import login_user, login_required, current_user, logout_user
+from flask import Markup
 
 def populate_topics():
     from src.model import AllTopic
@@ -42,41 +43,6 @@ def gen_rnd_filename():
     filename_prefix = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
     return '%s%s' % (filename_prefix, str(random.randrange(1000, 10000)))
 
-@knowledge.route('/ckupload/', methods=['POST', 'OPTIONS'])
-def ckupload():
-    """CKEditor file upload"""
-    import os
-    from flask import make_response
-    from manage import app
-    error = ''
-    url = ''
-    callback = request.args.get("CKEditorFuncNum")
-    if request.method == 'POST' and 'upload' in request.files:
-        fileobj = request.files['upload']
-        fname, fext = os.path.splitext(fileobj.filename)
-        rnd_name = '%s%s' % (gen_rnd_filename(), fext)
-        filepath = os.path.join(app.static_folder, 'upload', rnd_name)
-        dirname = os.path.dirname(filepath)
-        if not os.path.exists(dirname):
-            try:
-                os.makedirs(dirname)
-            except:
-                error = 'ERROR_CREATE_DIR'
-        elif not os.access(dirname, os.W_OK):
-            error = 'ERROR_DIR_NOT_WRITEABLE'
-        if not error:
-            fileobj.save(filepath)
-            url = url_for('static', filename='%s/%s' % ('upload', rnd_name))
-    else:
-        error = 'post error'
-    res = """<script type="text/javascript">
-             window.parent.CKEDITOR.tools.callFunction(%s, '%s', '%s');
-             </script>""" % (callback, url, error)
-    response = make_response(res)
-    response.headers["Content-Type"] = "text/html"
-    return response
-
-########################################################################################################
 #################################################
 #
 #
@@ -399,8 +365,9 @@ def question():
             print "Topic is set to " + "unknown"
             db.session.add(topic_obj)
             db.session.commit()
-
-        return redirect(url_for('knowledge.my_questions'))
+        if(form.private.data) :
+            return redirect(url_for('knowledge.my_questions'))
+        return redirect(url_for('knowledge.all_questions'))
     else:
         flash("Please fill all the required fields")
     return render_template('knowledge/question.html', form=form)

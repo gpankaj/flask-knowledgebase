@@ -9,6 +9,7 @@ from flask_mail import Mail
 from flask_moment import Moment
 from flask_misaka import Misaka
 from flask_wtf.csrf import CsrfProtect
+from flaskext.markdown import Markdown
 
 
 import os
@@ -57,6 +58,7 @@ def create_app(config_name):
     bootstrap.init_app(app)
 
     jsglue = JSGlue(app)
+    Markdown(app)
 
     return app
 

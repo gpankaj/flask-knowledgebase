@@ -104,9 +104,26 @@ $(document).ready(function() {
 
 $(document).ready(function() {
     $('#example').DataTable( {
-        "order": [[ 3, "desc" ]]
+        "order": [[ 1, "desc" ]]
     } );
-} );
+    } );
+
+
+    $(document).ready(function() {
+    $('#example1').DataTable( {
+        "order": [[ 2, "desc" ]]
+    } );
+    } );
+
+
+
+    $(document).ready(function() {
+        $(".nav.nav-pills li").on("click", function () {
+            $(".nav.nav-pills li").removeClass("active");
+            $(this).addClass("active");
+        });
+    });
+
 </script>
 
 {{ super() }}
@@ -118,56 +135,53 @@ $(document).ready(function() {
 
 <div class="container">
 
-    <nav class="navbar navbar-inverse">
+    <div class="navbar navbar-inverse">
 
-
-
-        <div class="navbar-header">
-           <a class="navbar-brand" href="{{url_for('knowledge.index')}}">Simple Knowledge Base</a>
-        </div>
-
-        <ul class="nav navbar-nav">
+        <ul class="nav nav-pills text-bold custom">
+            <li>
+                <a class="active"  href="{{url_for('knowledge.index')}} ">Simple Knowledge Base</a>
+            </li>
             {% if current_user.is_authenticated() %}
             <li>
-                <a class="navbar-brand" href="{{url_for('knowledge.my_questions')}}">Drafts</a>
+                <a href="{{url_for('knowledge.my_questions')}}">Drafts</a>
             </li>
 
             <li>
-                <a class="navbar-brand" href="{{url_for('knowledge.all_questions')}}">My Questions</a>
+                <a  href="{{url_for('knowledge.all_questions')}}">My Questions</a>
             </li>
 
 
             <li>
-                <a class="navbar-brand" href="{{url_for('knowledge.question')}}">Ask a Question</a>
+                <a  href="{{url_for('knowledge.question')}}">Ask a Question</a>
             </li>
             <li>
-                <a  class="navbar-brand" href="{{url_for('knowledge.preference',username=current_user.email)}}">Preference</a>
+                <a  href="{{url_for('knowledge.preference',username=current_user.email)}}">Preference</a>
             </li>
 
             <li>
-                <a class="navbar-brand" href="{{url_for('knowledge.logout',username=current_user.email)}}">Logout</a>
+                <a href="{{url_for('knowledge.logout',username=current_user.email)}}">Logout</a>
             </li>
 
-            <li class="nav navbar-nav navbar-right text-primary">
+            <li class="navbar-right" style="padding-right: 15px; color: white">
                 Welcome {{ current_user.name }}
             </li>
-
-        {% endif %}
+            {% endif %}
 
             {% if not current_user.is_authenticated() %}
-            {% block replace_login_url %}
+                <li>
 
-            {% endblock %}
+                    {% block replace_login_url %}
+                    {% endblock %}
+                </li>
+            {% endif %}
 
-        {% endif %}
+            <li>
+                <a href="{{url_for('knowledge.help')}}">Help</a>
+            </li>
+
         </ul>
 
-
-
-        <ul class="navbar-brand navbar-right">
-            <a href="{{url_for('knowledge.help')}}">Help</a>
-        </ul>
-    </nav>
+    </div>
 
 {% endblock %}
 

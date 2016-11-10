@@ -1,12 +1,5 @@
-
-  <div class="form-group pull-right">
-    <input type="text" class="search form-control" placeholder="Search">
-  </div>
-  <span class="counter pull-right"></span>
-
-
-
-  <table class="table table-hover table-bordered results table-striped" cellspacing="0" width="100%">
+<div style="margin-top: 50px;padding-top: 50px">
+  <table id="example1" class="table table-hover table-bordered results table-striped" cellspacing="0" width="100%">
   <thead>
     <tr>
       <th>Count</th>
@@ -28,7 +21,7 @@
 
   {% if question_topic %}
 
-    {% for my_question in question_topic %}
+    {% for my_question in question_topic  %}
 
     <tr onclick="window.location.href='{{ url_for('knowledge.answer',question_id=my_question.id) }}';">
 
@@ -54,3 +47,4 @@
   {% endif %}
   </tbody>
 </table>
+</div>

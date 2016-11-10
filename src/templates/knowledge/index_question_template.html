@@ -1,10 +1,6 @@
+<div style="margin-top: 50px;padding-top: 50px">
 
-
-
-
-<br><br>
-
-  <table id="example" class="table table-hover table-bordered results table-striped" cellspacing="0" width="100%">
+  <table id="example" class="table table-hover table-bordered results table-striped" cellspacing="0" width="100%" >
 
   <thead>
     <tr>
@@ -25,7 +21,7 @@
 
   {% if question_topic %}
 
-    {% for my_question in question_topic|sort(attribute='date', reverse=True) %}
+    {% for my_question in question_topic %}
 
     <tr id="{{my_question.id}}" {% if my_question.answered %} style="background-color: lightgreen" {% endif %} >
 
@@ -73,6 +69,7 @@
   {% endif %}
   </tbody>
 </table>
+</div>
 <meta name="csrf-token" content="{{ csrf_token() }}">
   **Question in green are answered
 
@@ -144,5 +141,6 @@
       $('#request_question'+question_id).hide();
       return false;
     };
+
 
   </script>

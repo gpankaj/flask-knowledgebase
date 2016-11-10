@@ -81,3 +81,12 @@ select {
     outline: 1px solid darkblue;
     background: transparent;
 }
+
+.nav a{
+    color: white !important;
+    font-size: 1.5em !important;
+}
+
+.active{
+    background-color: red;
+}
