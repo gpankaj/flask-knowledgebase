@@ -18,7 +18,6 @@ debtcollector==0.7.0
 decorator==4.0.9
 docutils==0.12
 dominate==2.2.0
-drest==0.9.13
 ecdsa==0.13
 email==4.0.2
 email-reply-parser==0.3.0
