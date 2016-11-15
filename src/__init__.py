@@ -7,7 +7,6 @@ from flask_bootstrap import Bootstrap
 from flask_login import LoginManager
 from flask_mail import Mail
 from flask_moment import Moment
-from flask_misaka import Misaka
 from flask_wtf.csrf import CsrfProtect
 from flaskext.markdown import Markdown
 
@@ -17,7 +16,6 @@ os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 os.environ['WTF_CSRF_CHECK_DEFAULT'] = 'False'
 
 moment = Moment()
-misaka= Misaka()
 
 csrf = CsrfProtect()
 
@@ -37,7 +35,7 @@ db = SQLAlchemy()
 def create_app(config_name):
     app = Flask(__name__)
     app.config.from_object(config[config_name])
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:root@localhost/knowledgebase'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:root1234@knowledgebase2016.cd3pupo3w3sq.ap-southeast-1.rds.amazonaws.com/knowledgebase'
 
     db.init_app(app)
 
@@ -53,7 +51,6 @@ def create_app(config_name):
     app.register_blueprint(knowledge_blueprint)
 
     moment.init_app(app)
-    misaka.init_app(app)
 
     bootstrap.init_app(app)
 
