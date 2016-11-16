@@ -11,6 +11,7 @@ class Auth:
 
     REDIRECT_URI = 'http://localhost:5000/gCallback'
     REDIRECT_URI = 'http://ec2-54-255-134-178.ap-southeast-1.compute.amazonaws.com:5000/gCallback'
+    REDIRECT_URI = 'http://ec2-54-255-134-178.ap-southeast-1.compute.amazonaws.com/gCallback'
 
     AUTH_URI = 'https://accounts.google.com/o/oauth2/auth'
     TOKEN_URI = 'https://accounts.google.com/o/oauth2/token'

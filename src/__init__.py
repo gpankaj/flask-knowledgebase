@@ -9,6 +9,7 @@ from flask_mail import Mail
 from flask_moment import Moment
 from flask_wtf.csrf import CsrfProtect
 from flaskext.markdown import Markdown
+from flask_misaka import Misaka
 
 
 import os
@@ -16,7 +17,7 @@ os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 os.environ['WTF_CSRF_CHECK_DEFAULT'] = 'False'
 
 moment = Moment()
-
+misaka= Misaka()
 csrf = CsrfProtect()
 
 bootstrap = Bootstrap()
@@ -51,6 +52,7 @@ def create_app(config_name):
     app.register_blueprint(knowledge_blueprint)
 
     moment.init_app(app)
+    misaka.init_app(app)
 
     bootstrap.init_app(app)
 
