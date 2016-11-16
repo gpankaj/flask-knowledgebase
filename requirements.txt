@@ -13,4 +13,4 @@ requests-oauthlib==0.6.2
 Flask-Script
 flask-wysiwyg
 WTForms==2.1
-
+Flask_Misaka
