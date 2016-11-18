@@ -14,3 +14,4 @@ Flask-Script
 flask-wysiwyg
 WTForms==2.1
 Flask_Misaka
+flaskckeditor
