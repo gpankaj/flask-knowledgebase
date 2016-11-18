@@ -12,7 +12,7 @@
     <div>
 
         <h6 align="right"><a href='{{ url_for("knowledge.editable_question",question_id=question_text.id)}}' >Rephrase Question</a></h6>
-        <h2 align="center"> {{question_text.subject }}</h2>
+        <h2 align="center"> {{question_text.subject | markdown( hard_wrap =True, fenced_code=True, footnotes=True)}}</h2>
     </div>
 
     {% if question_text.private %}

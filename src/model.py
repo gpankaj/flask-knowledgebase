@@ -41,7 +41,7 @@ class Question(db.Model):
 
     visible = db.Column(db.Boolean, default=True)
 
-    question = db.Column(db.UnicodeText, nullable=False)
+    question = db.Column(db.TEXT(524288), nullable=False)
     #question_answers = relationship("Answer")
     # One Question will have one username
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
