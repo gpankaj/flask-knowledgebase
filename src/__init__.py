@@ -36,7 +36,7 @@ db = SQLAlchemy()
 def create_app(config_name):
     app = Flask(__name__)
     app.config.from_object(config[config_name])
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:root1234@knowledgebase2017.cd3pupo3w3sq.ap-southeast-1.rds.amazonaws.com/knowledgebase'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:root1234@knowledgebase2018.cd3pupo3w3sq.ap-southeast-1.rds.amazonaws.com/knowledgebase'
 
     db.init_app(app)
 
